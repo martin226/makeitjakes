@@ -251,30 +251,36 @@ class AnthropicApiService
   end
 
   def format_resume(resume_content)
+    update_status("Starting resume formatting process...")
     Rails.logger.info("Starting resume formatting process...")
     Rails.logger.info("Resume content length: #{resume_content.length} characters")
     
     # Step 1: Extract structured information from the resume
+    update_status("Extracting structured information from resume...")
     Rails.logger.info("Step 1: Extracting structured information...")
     extracted_info = extract_resume_details(resume_content)
     Rails.logger.info("Extracted JSON structure:")
     Rails.logger.info(JSON.pretty_generate(extracted_info))
     
     # Step 2: Format the structured information into Jake's LaTeX template
+    update_status("Generating LaTeX from structured information...")
     Rails.logger.info("Step 2: Generating LaTeX from structured information...")
     latex = generate_latex(extracted_info)
     Rails.logger.info("Generated LaTeX:")
     Rails.logger.info(latex)
     
+    update_status("Resume formatting completed successfully!")
     Rails.logger.info("Resume formatting completed successfully")
     latex
   rescue RestClient::ExceptionWithResponse => e
     Rails.logger.error("API Error encountered:")
     Rails.logger.error(e.response)
+    update_status("Error: API request failed")
     handle_api_error(e)
   rescue StandardError => e
     Rails.logger.error("Anthropic API error: #{e.message}")
     Rails.logger.error(e.backtrace.join("\n"))
+    update_status("Error: #{e.message}")
     raise "Failed to process resume: #{e.message}"
   end
 
@@ -437,5 +443,9 @@ class AnthropicApiService
       Rails.logger.error("Other API error (#{error.response&.code})")
       raise "Anthropic API error: #{error_message}"
     end
+  end
+
+  def update_status(message)
+    $redis.set('resume_status', message)
   end
 end

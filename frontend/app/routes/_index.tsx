@@ -1,6 +1,6 @@
-import { type ActionFunctionArgs, json } from '@remix-run/node';
-import { Form, useActionData, useNavigation, useSubmit } from '@remix-run/react';
-import { useRef, useState } from 'react';
+import { type ActionFunctionArgs, json, type LoaderFunctionArgs } from '@remix-run/node';
+import { Form, useActionData, useNavigation, useSubmit, useLoaderData } from '@remix-run/react';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '~/components/ui/button';
 import { FileText, Upload, ArrowRight, MoveRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
@@ -15,6 +15,12 @@ interface ActionData {
   error?: string;
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  return json({
+    API_URL: process.env.API_URL || 'http://localhost:3000'
+  });
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const file = formData.get('file') as File;
@@ -24,7 +30,8 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    const latex = await convertResume(file);
+    const API_URL = process.env.API_URL || 'http://localhost:3000';
+    const latex = await convertResume(file, API_URL);
     return json<ActionData>({ latex });
   } catch (error) {
     return json<ActionData>(
@@ -35,12 +42,41 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
+  const { API_URL } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const submit = useSubmit();
+  const [status, setStatus] = useState<string>('');
+  const eventSourceRef = useRef<EventSource | null>(null);
+
+  useEffect(() => {
+    if (navigation.state === 'submitting' && !eventSourceRef.current) {
+      const eventSource = new EventSource(`${API_URL}/api/v1/status/events`);
+      
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setStatus(data.status);
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+        eventSourceRef.current = null;
+      };
+
+      eventSourceRef.current = eventSource;
+    }
+
+    // Cleanup on unmount or when submission is done
+    return () => {
+      if (eventSourceRef.current && navigation.state !== 'submitting') {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
+  }, [navigation.state, API_URL]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -256,6 +292,12 @@ export default function Index() {
         >
           {actionData.error}
         </motion.div>
+      )}
+
+      {isSubmitting && status && (
+        <div className="mt-4 text-sm text-blue-600 animate-pulse">
+          {status}
+        </div>
       )}
 
       <motion.div

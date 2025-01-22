@@ -1,10 +1,8 @@
-const API_URL = process.env.API_URL || 'http://localhost:3000';
-
-export async function convertResume(file: File) {
+export async function convertResume(file: File, apiUrl: string) {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_URL}/api/v1/resumes`, {
+  const response = await fetch(`${apiUrl}/api/v1/resumes`, {
     method: 'POST',
     body: formData,
     credentials: 'include',
