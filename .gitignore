@@ -1,0 +1,66 @@
+# General OS and Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.log
+*.orig
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Backend (Ruby on Rails)
+backend/.byebug_history
+backend/log/*
+!backend/log/.keep
+backend/tmp/*
+!backend/tmp/.keep
+backend/db/*.sqlite3
+backend/db/*.sqlite3-journal
+backend/public/assets
+backend/public/packs
+backend/public/packs-test
+backend/public/system
+backend/public/uploads
+backend/vendor/bundle
+backend/vendor/cache
+
+# Rails secrets
+backend/config/master.key
+backend/config/credentials.yml.enc
+
+# Frontend (Remix)
+frontend/node_modules/
+frontend/build/
+frontend/.cache/
+frontend/public/build/
+frontend/*.log
+frontend.pnpm-debug.log*
+frontend.nyc_output/
+frontend.coverage/
+frontend/.env
+frontend/.env.local
+
+# Frontend Yarn and pnpm
+frontend/.yarn-integrity
+frontend/.yarn/*
+!frontend/.yarn/releases/*
+!frontend/.yarn/plugins/*
+!frontend/.yarn/sdks/*
+!frontend/.yarn/versions/*
+frontend/pnpm-lock.yaml
+
+# Tests and coverage
+frontend/spec/examples.txt
+frontend/test/tmp
+frontend/test/.test-env
+frontend/coverage/
+
+# MacOS and Backup files
+.AppleDouble
+.LSOverride
+*~
+*.bak
+*.tmp
