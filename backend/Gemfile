@@ -61,3 +61,11 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem 'rest-client'
+gem 'dotenv-rails'
+gem 'pdf-reader'
+gem 'rack-cors'
+gem 'docx'
+gem 'ruby-ole'
+gem 'msworddoc-extractor'
