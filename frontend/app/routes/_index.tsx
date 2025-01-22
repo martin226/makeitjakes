@@ -5,20 +5,33 @@ import { Button } from '~/components/ui/button';
 import { FileText, Upload, ArrowRight, MoveRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { convertResume } from '~/lib/api';
+import { LatexOutput } from '~/components/latex-output';
 import before from '~/assets/img/before.png';
 import after from '~/assets/img/after.png';
+
+interface ActionData {
+  latex?: string;
+  error?: string;
+}
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const file = formData.get('file') as File;
 
   if (!file) {
-    return json({ error: 'No file provided' }, { status: 400 });
+    return json<ActionData>({ error: 'No file provided' }, { status: 400 });
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return json({ success: true });
+  try {
+    const latex = await convertResume(file);
+    return json<ActionData>({ latex });
+  } catch (error) {
+    return json<ActionData>(
+      { error: error instanceof Error ? error.message : 'Failed to convert resume' },
+      { status: 500 }
+    );
+  }
 }
 
 export default function Index() {
@@ -48,7 +61,9 @@ export default function Index() {
     if (
       file &&
       (file.type === 'application/pdf' ||
-        file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        file.type === 'application/msword' ||
+        file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+        file.type === 'text/plain')
     ) {
       setSelectedFile(file);
       const formData = new FormData();
@@ -95,115 +110,153 @@ export default function Index() {
         </p>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="flex items-center gap-8 mb-12"
-      >
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="relative w-[200px] h-[282px] rounded-lg overflow-hidden shadow-lg"
-        >
-          <img src={before} alt="Before transformation" className="w-full h-full object-contain" />
-          <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm py-2 text-center backdrop-blur-sm">
-            Before
-          </div>
-        </motion.div>
+      {!actionData?.latex && (
+        <>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="flex items-center gap-8 mb-12"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="relative w-[200px] h-[282px] rounded-lg overflow-hidden shadow-lg"
+            >
+              <img src={before} alt="Before transformation" className="w-full h-full object-contain" />
+              <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm py-2 text-center backdrop-blur-sm">
+                Before
+              </div>
+            </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="flex flex-col items-center gap-2"
-        >
-          <MoveRight className="w-8 h-8 text-blue-500" />
-          <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
-            Industry Standard
-          </div>
-        </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="flex flex-col items-center gap-2"
+            >
+              <MoveRight className="w-8 h-8 text-blue-500" />
+              <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                Industry Standard
+              </div>
+            </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="relative w-[200px] h-[282px] rounded-lg overflow-hidden shadow-lg"
-        >
-          <img src={after} alt="After transformation" className="w-full h-full object-contain" />
-          <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm py-2 text-center backdrop-blur-sm">
-            After
-          </div>
-        </motion.div>
-      </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="relative w-[200px] h-[282px] rounded-lg overflow-hidden shadow-lg"
+            >
+              <img src={after} alt="After transformation" className="w-full h-full object-contain" />
+              <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm py-2 text-center backdrop-blur-sm">
+                After
+              </div>
+            </motion.div>
+          </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Form
-          ref={formRef}
-          method="post"
-          encType="multipart/form-data"
-          className={cn(
-            'border-2 border-dashed rounded-lg p-8 transition-all duration-200 ease-in-out cursor-pointer',
-            'hover:border-blue-500/50 hover:bg-blue-50/50',
-            dragActive ? 'border-blue-500 bg-blue-50' : 'border-muted-foreground/25',
-            selectedFile ? 'border-blue-500/50 bg-blue-50/50' : ''
-          )}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          onClick={() =>
-            (formRef.current?.querySelector('input[type="file"]') as HTMLInputElement)?.click()
-          }
-        >
-          <input
-            type="file"
-            name="file"
-            id="file"
-            className="hidden"
-            accept=".pdf,.docx"
-            onChange={handleChange}
-          />
-          <div className="flex flex-col items-center gap-4">
-            <div className="p-4 rounded-full bg-white shadow-sm">
-              {selectedFile ? (
-                <FileText className="w-8 h-8 text-blue-500 animate-pulse" />
-              ) : (
-                <Upload className="w-8 h-8 text-muted-foreground" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="w-full max-w-md"
+          >
+            <Form
+              ref={formRef}
+              method="post"
+              encType="multipart/form-data"
+              className={cn(
+                'border-2 border-dashed rounded-lg p-8 transition-all duration-200 ease-in-out cursor-pointer',
+                'hover:border-blue-500/50 hover:bg-blue-50/50',
+                dragActive ? 'border-blue-500 bg-blue-50' : 'border-muted-foreground/25',
+                selectedFile ? 'border-blue-500/50 bg-blue-50/50' : ''
               )}
-            </div>
-            <div className="text-center">
-              {selectedFile ? (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">{selectedFile.name}</p>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="group bg-blue-600 hover:bg-blue-700"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    {isSubmitting ? 'Converting...' : 'Convert Now'}
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() =>
+                (formRef.current?.querySelector('input[type="file"]') as HTMLInputElement)?.click()
+              }
+            >
+              <input
+                type="file"
+                name="file"
+                id="file"
+                className="hidden"
+                accept=".pdf,.docx,.doc,.txt"
+                onChange={handleChange}
+              />
+              <div className="flex flex-col items-center gap-4">
+                <div className="p-4 rounded-full bg-white shadow-sm">
+                  {selectedFile ? (
+                    <FileText className="w-8 h-8 text-blue-500 animate-pulse" />
+                  ) : (
+                    <Upload className="w-8 h-8 text-muted-foreground" />
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-1">
-                  <p className="font-medium">Drop your resume here or click to browse</p>
-                  <p className="text-sm text-muted-foreground">Supports PDF and DOCX files</p>
+                <div className="text-center">
+                  {selectedFile ? (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">{selectedFile.name}</p>
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="group bg-blue-600 hover:bg-blue-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        {isSubmitting ? 'Converting...' : 'Convert Now'}
+                        <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="font-medium">Drop your resume here or click to browse</p>
+                      <p className="text-sm text-muted-foreground">Supports PDF, DOC, DOCX, and TXT files</p>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+            </Form>
+          </motion.div>
+        </>
+      )}
+
+      <AnimatePresence>
+        {actionData?.latex && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full max-w-4xl"
+          >
+            <div className="flex justify-end mb-4">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSelectedFile(null);
+                  window.location.reload();
+                }}
+              >
+                Convert Another Resume
+              </Button>
             </div>
-          </div>
-        </Form>
-      </motion.div>
+            <LatexOutput latex={actionData.latex} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {actionData?.error && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-4 p-4 bg-red-50 text-red-600 rounded-lg"
+        >
+          {actionData.error}
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0 }}
