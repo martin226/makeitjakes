@@ -5,6 +5,8 @@ import { Button } from '~/components/ui/button';
 import { FileText, Upload, ArrowRight, MoveRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import before from '~/assets/img/before.png';
+import after from '~/assets/img/after.png';
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -105,11 +107,7 @@ export default function Index() {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="relative w-[200px] h-[282px] rounded-lg overflow-hidden shadow-lg"
         >
-          <img
-            src="https://resumeworded.com/assets/images/resume-guides/software-engineer-intern.png"
-            alt="Before transformation"
-            className="w-full h-full object-contain"
-          />
+          <img src={before} alt="Before transformation" className="w-full h-full object-contain" />
           <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm py-2 text-center backdrop-blur-sm">
             Before
           </div>
@@ -133,11 +131,7 @@ export default function Index() {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="relative w-[200px] h-[282px] rounded-lg overflow-hidden shadow-lg"
         >
-          <img
-            src="https://i.ibb.co/QbypnwX/image.png"
-            alt="After transformation"
-            className="w-full h-full object-contain"
-          />
+          <img src={after} alt="After transformation" className="w-full h-full object-contain" />
           <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-sm py-2 text-center backdrop-blur-sm">
             After
           </div>
