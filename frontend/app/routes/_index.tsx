@@ -10,10 +10,11 @@ import { LatexOutput } from '~/components/latex-output';
 import before from '~/assets/img/before.png';
 import after from '~/assets/img/after.png';
 
-interface ActionData {
+type ActionData = {
   latex?: string;
   error?: string;
-}
+  request_id?: string;
+};
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
@@ -31,8 +32,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const API_URL = process.env.API_URL || 'http://localhost:3000';
-    const latex = await convertResume(file, API_URL);
-    return json<ActionData>({ latex });
+    const response = await convertResume(file, API_URL);
+    return json<ActionData>({ request_id: response.request_id });
   } catch (error) {
     return json<ActionData>(
       { error: error instanceof Error ? error.message : 'Failed to convert resume' },
@@ -50,33 +51,96 @@ export default function Index() {
   const formRef = useRef<HTMLFormElement>(null);
   const submit = useSubmit();
   const [status, setStatus] = useState<string>('');
+  const [requestId, setRequestId] = useState<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const [latex, setLatex] = useState<string | null>(null);
 
+  // Handle request ID updates from action data
   useEffect(() => {
-    if (navigation.state === 'submitting' && !eventSourceRef.current) {
-      const eventSource = new EventSource(`${API_URL}/api/v1/status/events`);
+    console.log('Action data updated:', actionData);
+    if (actionData?.request_id) {
+      console.log('Setting request ID:', actionData.request_id);
+      setRequestId(actionData.request_id);
+    }
+  }, [actionData]);
+
+  // Handle SSE connection
+  useEffect(() => {
+    console.log('SSE Effect running:', {
+      navigationState: navigation.state,
+      requestId,
+      hasEventSource: !!eventSourceRef.current,
+      actionData: !!actionData
+    });
+
+    // Only set up SSE when we have a request ID
+    if (requestId && !eventSourceRef.current) {
+      console.log('Creating new EventSource connection:', {
+        url: `${API_URL}/api/v1/status/events?request_id=${requestId}`
+      });
+
+      const eventSource = new EventSource(`${API_URL}/api/v1/status/events?request_id=${requestId}`);
       
       eventSource.onmessage = (event) => {
+        console.log('Received SSE message:', event.data);
         const data = JSON.parse(event.data);
         setStatus(data.status);
+
+        // If we have a result, update the state
+        if (data.result?.latex) {
+          console.log('Received final result, updating latex state');
+          setLatex(data.result.latex);
+        }
+
+        // Close connection if we receive a completion or error message
+        if (data.status.includes("completed") || data.status.includes("Error")) {
+          console.log('Closing connection due to completion/error');
+          eventSource.close();
+          eventSourceRef.current = null;
+          setRequestId(null); // Reset request ID
+        }
       };
 
-      eventSource.onerror = () => {
+      eventSource.onerror = (error) => {
+        console.error('SSE connection error:', error);
         eventSource.close();
         eventSourceRef.current = null;
+        setRequestId(null); // Reset request ID
+      };
+
+      eventSource.onopen = () => {
+        console.log('SSE connection opened successfully');
       };
 
       eventSourceRef.current = eventSource;
     }
 
-    // Cleanup on unmount or when submission is done
+    // Clean up when component unmounts or when we're done
     return () => {
-      if (eventSourceRef.current && navigation.state !== 'submitting') {
+      if (eventSourceRef.current) {
+        console.log('Cleaning up SSE connection');
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
     };
-  }, [navigation.state, API_URL]);
+  }, [API_URL, requestId]);
+
+  // Reset state when starting a new submission
+  useEffect(() => {
+    if (navigation.state === 'submitting') {
+      setStatus('');
+      setLatex(null);
+      if (eventSourceRef.current) {
+        console.log('Cleaning up previous SSE connection before new submission');
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    }
+  }, [navigation.state]);
+
+  const handleSubmission = (formData: FormData) => {
+    submit(formData, { method: 'post', encType: 'multipart/form-data' });
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -104,7 +168,7 @@ export default function Index() {
       setSelectedFile(file);
       const formData = new FormData();
       formData.append('file', file);
-      submit(formData, { method: 'post', encType: 'multipart/form-data' });
+      handleSubmission(formData);
     }
   };
 
@@ -114,7 +178,7 @@ export default function Index() {
       setSelectedFile(file);
       const formData = new FormData();
       formData.append('file', file);
-      submit(formData, { method: 'post', encType: 'multipart/form-data' });
+      handleSubmission(formData);
     }
   };
 
@@ -146,7 +210,7 @@ export default function Index() {
         </p>
       </motion.div>
 
-      {!actionData?.latex && (
+      {!latex && (
         <>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -261,7 +325,7 @@ export default function Index() {
       )}
 
       <AnimatePresence>
-        {actionData?.latex && (
+        {latex && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -273,13 +337,15 @@ export default function Index() {
                 variant="ghost"
                 onClick={() => {
                   setSelectedFile(null);
+                  setLatex(null);
+                  setStatus('');
                   window.location.reload();
                 }}
               >
                 Convert Another Resume
               </Button>
             </div>
-            <LatexOutput latex={actionData.latex} />
+            <LatexOutput latex={latex} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -294,10 +360,14 @@ export default function Index() {
         </motion.div>
       )}
 
-      {isSubmitting && status && (
-        <div className="mt-4 text-sm text-blue-600 animate-pulse">
+      {status && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-4 text-sm text-blue-600 animate-pulse"
+        >
           {status}
-        </div>
+        </motion.div>
       )}
 
       <motion.div

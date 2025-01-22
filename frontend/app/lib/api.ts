@@ -14,5 +14,5 @@ export async function convertResume(file: File, apiUrl: string) {
   }
 
   const data = await response.json();
-  return data.latex;
+  return { latex: data.latex, request_id: data.request_id };
 } 

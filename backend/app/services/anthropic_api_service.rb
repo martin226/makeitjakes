@@ -245,8 +245,9 @@ class AnthropicApiService
     \end{document}
   LATEX
 
-  def initialize
+  def initialize(request_id = nil)
     @api_key = ENV['ANTHROPIC_API_KEY']
+    @request_id = request_id || SecureRandom.uuid
     raise 'ANTHROPIC_API_KEY not set in environment' if @api_key.nil?
   end
 
@@ -302,7 +303,7 @@ class AnthropicApiService
     Rails.logger.error("JSON parsing error: #{e.message}")
     Rails.logger.error("Failed response content:")
     Rails.logger.error(response)
-    raise "Failed to extract resume details"
+    raise "Failed to extract resume details: #{e.message}"
   end
 
   def generate_latex(extracted_info)
@@ -410,6 +411,7 @@ class AnthropicApiService
 
       Return only the complete LaTeX code, starting with \\documentclass and ending with \\end{document}.
       Ensure all LaTeX commands are properly escaped and the document is compilable.
+      IMPORTANT: Do not include any additional text or comments in the LaTeX output. Do not include any ```latex or ``` in the LaTeX output.
     PROMPT
   end
 
@@ -446,6 +448,15 @@ class AnthropicApiService
   end
 
   def update_status(message)
-    $redis.set('resume_status', message)
+    Rails.logger.info("Updating status: #{message}")
+    status_key = "resume_status:#{@request_id}"
+    Rails.logger.info("Status key: #{status_key}")
+    begin
+      $redis.set(status_key, message)
+      Rails.logger.info("Status updated successfully")
+    rescue StandardError => e
+      Rails.logger.error("Failed to update status in Redis: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
+    end
   end
 end

@@ -6,14 +6,15 @@ class ResumeFormatterService
     'text/plain'
   ].freeze
 
-  def initialize(file)
+  def initialize(file, request_id = nil)
     @file = file
+    @request_id = request_id
     validate_file!
   end
 
   def format
     content = extract_text_from_file
-    anthropic_service = AnthropicApiService.new
+    anthropic_service = AnthropicApiService.new(@request_id)
     anthropic_service.format_resume(content)
   rescue StandardError => e
     handle_error(e)

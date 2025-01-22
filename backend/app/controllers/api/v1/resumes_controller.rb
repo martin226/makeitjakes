@@ -5,13 +5,32 @@ module Api
       
       def create
         file = params[:file]
+
         if file.nil?
           render json: { error: 'No file provided' }, status: :bad_request
           return
         end
 
-        latex_content = ResumeFormatterService.new(file).format
-        render json: { latex: latex_content }, content_type: 'application/x-latex'
+        # Generate request ID in the backend
+        request_id = SecureRandom.uuid
+        
+        # Send initial status update immediately
+        $redis.set("resume_status:#{request_id}", "Starting resume formatting process...")
+        
+        # Process the resume in a background thread to allow the response to be sent immediately
+        Thread.new do
+          begin
+            latex_content = ResumeFormatterService.new(file, request_id).format
+            $redis.set("resume_status:#{request_id}", "Resume formatting completed successfully!")
+            $redis.set("resume_result:#{request_id}", { latex: latex_content }.to_json)
+          rescue StandardError => e
+            error_message = e.message
+            $redis.set("resume_status:#{request_id}", "Error: #{error_message}")
+          end
+        end
+
+        # Return immediately with the request ID
+        render json: { request_id: request_id }, status: :accepted
       rescue StandardError => e
         error_message = e.message
         status = case error_message
