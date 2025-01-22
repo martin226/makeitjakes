@@ -304,20 +304,31 @@ class AnthropicApiService
     Rails.logger.info("LaTeX prompt:")
     Rails.logger.info(latex_prompt(extracted_info))
     
-    latex = make_api_request(latex_prompt(extracted_info))
+    pre_message = "I'll help you convert the resume information into LaTeX format using Jake's template. Here's the complete LaTeX code:"
+    latex = make_api_request(latex_prompt(extracted_info), pre_message)
     Rails.logger.info("Successfully generated LaTeX")
     latex
   end
 
-  def make_api_request(prompt)
+  def make_api_request(prompt, pre_message = nil)
     Rails.logger.info("Making request to Anthropic API...")
+    messages = [{
+      role: 'user',
+      content: prompt
+    }]
+
+    # Add pre-filled assistant message if provided
+    if pre_message
+      messages << {
+        role: 'assistant',
+        content: pre_message
+      }
+    end
+
     request_body = {
       model: 'claude-3-5-haiku-20241022',
       max_tokens: 4000,
-      messages: [{
-        role: 'user',
-        content: prompt
-      }]
+      messages: messages
     }
     Rails.logger.info("Request body:")
     Rails.logger.info(JSON.pretty_generate(request_body))
