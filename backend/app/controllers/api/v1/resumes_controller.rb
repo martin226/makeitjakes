@@ -35,7 +35,7 @@ module Api
         error_message = e.message
         status = case error_message
                 when 'No file provided', 'Invalid file type', 'File too large', 'Unsupported file type',
-                     'Unable to read DOC file', 'Unable to read DOCX file'
+                     'Unable to read DOC file', 'Unable to read DOCX file', 'Not a resume'
                   :bad_request
                 when 'Invalid API key'
                   :unauthorized

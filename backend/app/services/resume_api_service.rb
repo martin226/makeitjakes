@@ -36,10 +36,11 @@ class ResumeApiService
     response = make_api_request(extraction_prompt(resume_content))
     
     parsed_json = JSON.parse(response)
-    if parsed_json.key?('error')
+    if parsed_json['error']
       Rails.logger.error("Error in extraction response: #{parsed_json['error']}")
-      raise "Failed to extract resume details: #{parsed_json['error']}"
+      raise parsed_json['error']  # This will raise "Not a resume" directly
     end
+
     Rails.logger.info("Successfully parsed JSON response")
     parsed_json
   rescue JSON::ParserError => e
