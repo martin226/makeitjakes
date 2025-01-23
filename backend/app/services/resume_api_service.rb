@@ -1,0 +1,88 @@
+class ResumeApiService
+  def initialize(request_id = nil)
+    @request_id = request_id || SecureRandom.uuid
+  end
+
+  def format_resume(resume_content)
+    update_status("Starting resume formatting process...")
+    Rails.logger.info("Starting resume formatting process...")
+    Rails.logger.info("Resume content length: #{resume_content.length} characters")
+    
+    # Step 1: Extract structured information from the resume
+    update_status("Extracting structured information from resume...")
+    Rails.logger.info("Step 1: Extracting structured information...")
+    extracted_info = extract_resume_details(resume_content)
+    
+    # Step 2: Format the structured information into Jake's LaTeX template
+    update_status("Generating LaTeX from structured information...")
+    Rails.logger.info("Step 2: Generating LaTeX from structured information...")
+    latex = generate_latex(extracted_info)
+    
+    update_status("Resume formatting completed successfully!")
+    Rails.logger.info("Resume formatting completed successfully")
+    latex
+  rescue StandardError => e
+    Rails.logger.error("API error: #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n"))
+    update_status("Error: #{e.message}")
+    raise "Failed to process resume: #{e.message}"
+  end
+
+  protected
+
+  def extract_resume_details(resume_content)
+    Rails.logger.info("Making API request for resume extraction...")
+    
+    response = make_api_request(extraction_prompt(resume_content))
+    
+    parsed_json = JSON.parse(response)
+    if parsed_json.key?('error')
+      Rails.logger.error("Error in extraction response: #{parsed_json['error']}")
+      raise "Failed to extract resume details: #{parsed_json['error']}"
+    end
+    Rails.logger.info("Successfully parsed JSON response")
+    parsed_json
+  rescue JSON::ParserError => e
+    Rails.logger.error("JSON parsing error: #{e.message}")
+    Rails.logger.error("Failed response content:")
+    Rails.logger.error(response)
+    raise "Failed to extract resume details: #{e.message}"
+  end
+
+  def generate_latex(extracted_info)
+    Rails.logger.info("Making API request for LaTeX generation...")
+    Rails.logger.info("LaTeX prompt:")
+    Rails.logger.info(latex_prompt(extracted_info))
+    
+    pre_message = "I'll help you convert the resume information into LaTeX format using Jake's template. Here's the complete LaTeX code:"
+    latex = make_api_request(latex_prompt(extracted_info), pre_message)
+    Rails.logger.info("Successfully generated LaTeX")
+    latex
+  end
+
+  def extraction_prompt(resume_content)
+    ResumePrompts.extraction_prompt(resume_content)
+  end
+
+  def latex_prompt(extracted_info)
+    ResumePrompts.latex_prompt(extracted_info)
+  end
+
+  def update_status(message)
+    Rails.logger.info("Updating status: #{message}")
+    status_key = "resume_status:#{@request_id}"
+    Rails.logger.info("Status key: #{status_key}")
+    begin
+      $redis.set(status_key, message)
+      Rails.logger.info("Status updated successfully")
+    rescue StandardError => e
+      Rails.logger.error("Failed to update status in Redis: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
+    end
+  end
+
+  # To be implemented by child classes
+  def make_api_request(prompt, pre_message = nil)
+    raise NotImplementedError, "Child classes must implement make_api_request"
+  end
+end 
