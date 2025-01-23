@@ -21,9 +21,12 @@ RUN apt-get update -qq && \
     libjemalloc2 \
     libvips \
     sqlite3 \
-    texlive \
+    texlive-full \
     texlive-latex-extra \
     texlive-fonts-recommended \
+    texlive-fonts-extra \
+    texlive-xetex \
+    latexmk \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
