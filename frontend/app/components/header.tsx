@@ -21,7 +21,7 @@ export function Header() {
         </span>
       </h1>
       <p className="text-muted-foreground text-lg max-w-[500px]">
-        Transform your resume into Jake&apos;s elegant LaTeX template with just one click. No
+        Transform your SWE resume into Jake&apos;s elegant LaTeX template with just one click. No
         LaTeX knowledge required.
       </p>
     </motion.div>
