@@ -18,8 +18,10 @@ type ActionData = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  // Get the request URL to determine the base URL
+  const url = new URL(request.url);
   return json({
-    API_ORIGIN: process.env.API_ORIGIN || 'http://localhost:3000'
+    API_ORIGIN: url.origin
   });
 }
 
@@ -32,8 +34,9 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    const apiOrigin = process.env.API_ORIGIN || 'http://localhost:3000';
-    const response = await convertResume(file, apiOrigin);
+    // Use the request URL to determine the base URL
+    const url = new URL(request.url);
+    const response = await convertResume(file, url.origin);
     return json<ActionData>({ request_id: response.request_id });
   } catch (error) {
     return json<ActionData>(
@@ -74,11 +77,21 @@ export default function Index() {
 
     // Only set up SSE when we have a request ID
     if (requestId && !eventSourceRef.current) {
+      // Create EventSource URL
+      const eventSourceUrl = new URL(`${API_ORIGIN}/api/v1/status/events`);
+      
+      // Force HTTPS only if we're not in development (localhost)
+      // TODO: This is a temporary fix to ensure HTTPS is used. We need to revisit this in the future.
+      if (!API_ORIGIN.includes('localhost')) {
+        eventSourceUrl.protocol = 'https:';
+      }
+      eventSourceUrl.searchParams.set('request_id', requestId);
+
       console.log('Creating new EventSource connection:', {
-        url: `${API_ORIGIN}/api/v1/status/events?request_id=${requestId}`
+        url: eventSourceUrl.toString()
       });
 
-      eventSource = new EventSource(`${API_ORIGIN}/api/v1/status/events?request_id=${requestId}`);
+      eventSource = new EventSource(eventSourceUrl.toString());
       eventSourceRef.current = eventSource;
 
       const handleMessage = (event: MessageEvent) => {

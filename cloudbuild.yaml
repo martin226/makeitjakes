@@ -1,0 +1,48 @@
+steps:
+  # Build and push backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/makeitjakes-backend', './backend']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/makeitjakes-backend']
+
+  # Build and push frontend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/makeitjakes-frontend', './frontend']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/makeitjakes-frontend']
+
+  # Deploy backend to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'makeitjakes-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/makeitjakes-backend'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'RAILS_ENV=production,RAILS_LOG_TO_STDOUT=true,RAILS_SERVE_STATIC_FILES=true,REDIS_URL=redis://10.188.33.171:6379'
+      - '--set-secrets'
+      - 'RAILS_MASTER_KEY=rails-master-key:latest,SECRET_KEY_BASE=rails-secret-key-base:latest,ANTHROPIC_API_KEY=anthropic-api-key:latest'
+
+  # Deploy frontend to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'makeitjakes-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/makeitjakes-frontend'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/makeitjakes-backend'
+  - 'gcr.io/$PROJECT_ID/makeitjakes-frontend' 
