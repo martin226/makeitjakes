@@ -149,7 +149,10 @@ export default function Index() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <FileUpload isSubmitting={isSubmitting} />
+            <FileUpload 
+              isSubmitting={isSubmitting} 
+              isProcessing={!!requestId} 
+            />
           </motion.div>
         </>
       )}
