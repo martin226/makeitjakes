@@ -72,7 +72,8 @@ module Api
           # Only delete the status and result if we completed successfully
           if $redis.get(status_key)&.include?("completed")
             $redis.del(status_key)
-            $redis.del(result_key)
+            # Set expiry on result instead of deleting immediately
+            $redis.expire(result_key, 3600) # Keep result for 1 hour after completion
           end
           response.stream.close
         end

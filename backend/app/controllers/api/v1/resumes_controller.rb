@@ -52,6 +52,84 @@ module Api
         render json: { error: error_message }, status: status
       end
 
+      def preview
+        request_id = params[:request_id]
+        
+        # Set headers to allow iframe embedding
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
+        
+        if request_id.nil?
+          render json: { error: 'No request ID provided' }, status: :bad_request
+          return
+        end
+
+        result_key = "resume_result:#{request_id}"
+        pdf_key = "resume_pdf:#{request_id}"
+        
+        # Try to get cached PDF first
+        if cached_pdf = $redis.get(pdf_key)
+          Rails.logger.info("Serving cached PDF for request #{request_id}")
+          send_data cached_pdf,
+                    filename: 'resume.pdf',
+                    type: 'application/pdf',
+                    disposition: 'inline'
+          return
+        end
+
+        result = $redis.get(result_key)
+        if result.nil?
+          render json: { error: 'No resume found for this ID' }, status: :not_found
+          return
+        end
+
+        begin
+          parsed_result = JSON.parse(result)
+          latex = parsed_result['latex']
+          
+          # Create a temporary directory with unique name for this request
+          dir = Dir.mktmpdir("resume_#{request_id}")
+          
+          # Write LaTeX content to a file
+          tex_file = File.join(dir, 'resume.tex')
+          File.write(tex_file, latex)
+          
+          # Compile LaTeX to PDF with output redirection
+          output = `cd #{dir} && pdflatex -interaction=nonstopmode resume.tex 2>&1`
+          Rails.logger.info("pdflatex output: #{output}")
+          
+          # Check if compilation was successful
+          unless $?.success?
+            Rails.logger.error("PDF compilation failed: #{output}")
+            render json: { error: 'Failed to compile PDF' }, status: :internal_server_error
+            return
+          end
+          
+          # Read the generated PDF
+          pdf_file = File.join(dir, 'resume.pdf')
+          if File.exist?(pdf_file)
+            pdf_content = File.binread(pdf_file)
+            
+            # Cache the PDF content with the same expiry as the result
+            $redis.set(pdf_key, pdf_content)
+            $redis.expire(pdf_key, 3600) # 1 hour expiry
+            
+            send_data pdf_content,
+                     filename: 'resume.pdf',
+                     type: 'application/pdf',
+                     disposition: 'inline'
+          else
+            Rails.logger.error("PDF file not found after compilation")
+            render json: { error: 'Failed to generate PDF' }, status: :internal_server_error
+          end
+        rescue StandardError => e
+          render json: { error: "Failed to generate PDF: #{e.message}" }, status: :internal_server_error
+        ensure
+          # Clean up temporary directory
+          FileUtils.remove_entry dir if dir
+        end
+      end
+
       private
 
       def check_rate_limit
@@ -61,7 +139,8 @@ module Api
 
         if count >= RATE_LIMIT
           Rails.logger.warn("Rate limit exceeded for IP: #{ip}")
-          raise 'Rate limit exceeded. Please try again in an hour.'
+          render json: { error: 'Rate limit exceeded. Please try again in an hour.' }, status: :too_many_requests
+          return
         end
 
         # Increment the counter

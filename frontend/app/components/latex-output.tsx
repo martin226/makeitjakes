@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { Button } from './ui/button';
+import { motion } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { Button } from '~/components/ui/button';
 import { Copy, Download, Eye } from 'lucide-react';
 import { cn } from '~/lib/utils';
 
 interface LatexOutputProps {
   latex: string;
   className?: string;
+  requestId: string | null;
 }
 
-export function LatexOutput({ latex, className }: LatexOutputProps) {
+export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -30,42 +33,38 @@ export function LatexOutput({ latex, className }: LatexOutputProps) {
   };
 
   return (
-    <div className={cn('space-y-4', className)}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">LaTeX Output</h3>
-        <div className="flex gap-2">
+    <Tabs defaultValue="pdf" className="w-full">
+      <TabsList className="mb-4">
+        <TabsTrigger value="pdf">Rendered PDF</TabsTrigger>
+        <TabsTrigger value="latex">LaTeX Code</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="pdf" className="mt-0">
+        <div className="bg-white rounded-lg shadow-lg p-4 h-[800px]">
+          <iframe
+            src={`/api/v1/resumes/preview?request_id=${requestId}`}
+            className="w-full h-full border-0"
+            title="PDF Preview"
+          />
+        </div>
+      </TabsContent>
+
+      <TabsContent value="latex" className="mt-0">
+        <div className="relative">
           <Button
             variant="outline"
             size="sm"
+            className="absolute right-4 top-4 gap-1.5"
             onClick={handleCopy}
-            className="gap-2"
           >
             <Copy className="w-4 h-4" />
             {copied ? 'Copied!' : 'Copy'}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownload}
-            className="gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Download
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.open('https://www.overleaf.com/docs?snip_uri=your-latex-url', '_blank')}
-            className="gap-2"
-          >
-            <Eye className="w-4 h-4" />
-            Preview in Overleaf
-          </Button>
+          <pre className="bg-zinc-950 rounded-lg p-4 overflow-x-auto">
+            <code className="text-white text-sm">{latex}</code>
+          </pre>
         </div>
-      </div>
-      <pre className="bg-zinc-950 text-zinc-50 p-4 rounded-lg overflow-x-auto text-sm">
-        <code>{latex}</code>
-      </pre>
-    </div>
+      </TabsContent>
+    </Tabs>
   );
 } 

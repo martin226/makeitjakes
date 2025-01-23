@@ -14,7 +14,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :resumes, only: [:create]
+      resources :resumes, only: [:create] do
+        get :preview, on: :collection
+      end
       get 'status/events', to: 'status#events'
     end
   end

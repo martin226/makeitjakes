@@ -1,20 +1,33 @@
-import type { LinksFunction, MetaFunction } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { json, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node';
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from '@remix-run/react';
 import styles from './tailwind.css?url';
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Make it Jake's" },
-    {
-      name: 'description',
-      content: "Transform your resume into Jake's elegant LaTeX template with just one click",
-    },
-  ];
-};
+export async function loader({ request }: LoaderFunctionArgs) {
+  const ENV = {
+    API_URL: process.env.API_URL || 'http://localhost:3000',
+  };
+  
+  return json({ ENV });
+}
 
 export default function App() {
+  const { ENV } = useLoaderData<typeof loader>();
+
+  // Set window.ENV as soon as we have the data
+  if (typeof window !== 'undefined') {
+    window.ENV = ENV;
+  }
+
   return (
     <html lang="en">
       <head>
@@ -25,8 +38,14 @@ export default function App() {
       </head>
       <body>
         <Outlet />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(ENV)}`,
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
+        <LiveReload />
       </body>
     </html>
   );

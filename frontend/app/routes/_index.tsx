@@ -19,7 +19,7 @@ type ActionData = {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
-    API_URL: process.env.API_URL || 'http://localhost:3000'
+    API_ORIGIN: process.env.API_ORIGIN || 'http://localhost:3000'
   });
 }
 
@@ -32,8 +32,8 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    const API_URL = process.env.API_URL || 'http://localhost:3000';
-    const response = await convertResume(file, API_URL);
+    const apiOrigin = process.env.API_ORIGIN || 'http://localhost:3000';
+    const response = await convertResume(file, apiOrigin);
     return json<ActionData>({ request_id: response.request_id });
   } catch (error) {
     return json<ActionData>(
@@ -44,7 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { API_URL } = useLoaderData<typeof loader>();
+  const { API_ORIGIN } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const [status, setStatus] = useState<string>('');
@@ -70,57 +70,79 @@ export default function Index() {
       actionData: !!actionData
     });
 
+    let eventSource: EventSource | null = null;
+
     // Only set up SSE when we have a request ID
     if (requestId && !eventSourceRef.current) {
       console.log('Creating new EventSource connection:', {
-        url: `${API_URL}/api/v1/status/events?request_id=${requestId}`
+        url: `${API_ORIGIN}/api/v1/status/events?request_id=${requestId}`
       });
 
-      const eventSource = new EventSource(`${API_URL}/api/v1/status/events?request_id=${requestId}`);
-      
-      eventSource.onmessage = (event) => {
+      eventSource = new EventSource(`${API_ORIGIN}/api/v1/status/events?request_id=${requestId}`);
+      eventSourceRef.current = eventSource;
+
+      const handleMessage = (event: MessageEvent) => {
         console.log('Received SSE message:', event.data);
-        const data = JSON.parse(event.data);
-        setStatus(data.status);
+        try {
+          const data = JSON.parse(event.data);
+          setStatus(data.status);
 
-        // If we have a result, update the state
-        if (data.result?.latex) {
-          console.log('Received final result, updating latex state');
-          setLatex(data.result.latex);
-        }
+          // If we have a result, update the state
+          if (data.result?.latex) {
+            console.log('Received final result, updating latex state');
+            setLatex(data.result.latex);
+          }
 
-        // Close connection if we receive a completion or error message
-        if (data.status.includes("completed") || data.status.includes("Error")) {
-          console.log('Closing connection due to completion/error');
-          eventSource.close();
+          // Close connection if we receive a completion or error message
+          if (data.status.includes("completed") || data.status.includes("Error")) {
+            console.log('Closing connection due to completion/error');
+            eventSource?.close();
+            eventSourceRef.current = null;
+            // Don't reset requestId here, we need it for the PDF preview
+          }
+        } catch (error) {
+          console.error('Failed to parse SSE message:', error);
+          setStatus('An error occurred while processing your request');
+          eventSource?.close();
           eventSourceRef.current = null;
-          setRequestId(null); // Reset request ID
         }
       };
 
-      eventSource.onerror = (error) => {
+      const handleError = (error: Event) => {
         console.error('SSE connection error:', error);
-        eventSource.close();
+        eventSource?.close();
         eventSourceRef.current = null;
         setRequestId(null); // Reset request ID
       };
 
-      eventSource.onopen = () => {
+      const handleOpen = () => {
         console.log('SSE connection opened successfully');
       };
 
-      eventSourceRef.current = eventSource;
+      eventSource.addEventListener('message', handleMessage);
+      eventSource.addEventListener('error', handleError);
+      eventSource.addEventListener('open', handleOpen);
+
+      // Clean up function
+      return () => {
+        console.log('Cleaning up SSE connection and listeners');
+        eventSource?.removeEventListener('message', handleMessage);
+        eventSource?.removeEventListener('error', handleError);
+        eventSource?.removeEventListener('open', handleOpen);
+        eventSource?.close();
+        eventSourceRef.current = null;
+      };
     }
 
-    // Clean up when component unmounts or when we're done
+    // Clean up when component unmounts or when requestId changes
     return () => {
       if (eventSourceRef.current) {
-        console.log('Cleaning up SSE connection');
+        console.log('Cleaning up previous SSE connection');
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
     };
-  }, [API_URL, requestId]);
+  }, [requestId, API_ORIGIN]);
 
   // Reset state when starting a new submission
   useEffect(() => {
@@ -171,13 +193,14 @@ export default function Index() {
                 onClick={() => {
                   setLatex(null);
                   setStatus('');
+                  setRequestId(null);
                   window.location.reload();
                 }}
               >
                 Convert Another Resume
               </Button>
             </div>
-            <LatexOutput latex={latex} />
+            <LatexOutput latex={latex} requestId={requestId} />
           </motion.div>
         )}
       </AnimatePresence>
