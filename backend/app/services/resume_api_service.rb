@@ -8,6 +8,9 @@ class ResumeApiService
     Rails.logger.info("Starting resume formatting process...")
     Rails.logger.info("Resume content length: #{resume_content.length} characters")
     
+    # Validate word count
+    validate_word_count!(resume_content)
+    
     # Step 1: Extract structured information from the resume
     update_status("Extracting structured information from resume...")
     Rails.logger.info("Step 1: Extracting structured information...")
@@ -29,6 +32,16 @@ class ResumeApiService
   end
 
   protected
+
+  def validate_word_count!(content)
+    word_count = content.split(/\s+/).count
+    Rails.logger.info("Resume word count: #{word_count}")
+    if word_count > 2000
+      error_message = "Resume is too long (#{word_count} words)."
+      Rails.logger.error(error_message)
+      raise error_message
+    end
+  end
 
   def extract_resume_details(resume_content)
     Rails.logger.info("Making API request for resume extraction...")
