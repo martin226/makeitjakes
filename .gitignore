@@ -26,6 +26,7 @@ backend/public/system
 backend/public/uploads
 backend/vendor/bundle
 backend/vendor/cache
+backend/.env
 
 # Rails secrets
 backend/config/master.key
