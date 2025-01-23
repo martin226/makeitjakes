@@ -55,10 +55,6 @@ module Api
       def preview
         request_id = params[:request_id]
         
-        # Set headers to allow iframe embedding
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-        response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
-        
         if request_id.nil?
           render json: { error: 'No request ID provided' }, status: :bad_request
           return
@@ -70,10 +66,10 @@ module Api
         # Try to get cached PDF first
         if cached_pdf = $redis.get(pdf_key)
           Rails.logger.info("Serving cached PDF for request #{request_id}")
-          send_data cached_pdf,
-                    filename: 'resume.pdf',
-                    type: 'application/pdf',
-                    disposition: 'inline'
+          render json: { 
+            pdf: Base64.strict_encode64(cached_pdf),
+            contentType: 'application/pdf'
+          }
           return
         end
 
@@ -114,10 +110,10 @@ module Api
             $redis.set(pdf_key, pdf_content)
             $redis.expire(pdf_key, 3600) # 1 hour expiry
             
-            send_data pdf_content,
-                     filename: 'resume.pdf',
-                     type: 'application/pdf',
-                     disposition: 'inline'
+            render json: { 
+              pdf: Base64.strict_encode64(pdf_content),
+              contentType: 'application/pdf'
+            }
           else
             Rails.logger.error("PDF file not found after compilation")
             render json: { error: 'Failed to generate PDF' }, status: :internal_server_error
