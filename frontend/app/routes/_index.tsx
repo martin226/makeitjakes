@@ -173,7 +173,7 @@ export default function Index() {
   const isSubmitting = navigation.state === 'submitting';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-background to-blue-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-background to-blue-50 flex flex-col items-center justify-center p-4 md:p-8">
       <Header />
 
       {!latex && (
@@ -183,6 +183,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
+            className="w-full max-w-md"
           >
             <FileUpload 
               isSubmitting={isSubmitting} 
@@ -198,7 +199,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full max-w-4xl"
+            className="w-full max-w-[90vw] md:max-w-4xl"
           >
             <div className="flex justify-end mb-4">
               <Button

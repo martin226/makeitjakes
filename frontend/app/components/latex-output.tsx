@@ -34,13 +34,13 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
 
   return (
     <Tabs defaultValue="pdf" className="w-full">
-      <TabsList className="mb-4">
-        <TabsTrigger value="pdf">Rendered PDF</TabsTrigger>
-        <TabsTrigger value="latex">LaTeX Code</TabsTrigger>
+      <TabsList className="mb-4 w-full flex">
+        <TabsTrigger value="pdf" className="flex-1">Rendered PDF</TabsTrigger>
+        <TabsTrigger value="latex" className="flex-1">LaTeX Code</TabsTrigger>
       </TabsList>
 
       <TabsContent value="pdf" className="mt-0">
-        <div className="bg-white rounded-lg shadow-lg p-4 h-[800px]">
+        <div className="bg-white rounded-lg shadow-lg p-2 md:p-4 h-[500px] md:h-[800px]">
           <iframe
             src={`/api/v1/resumes/preview?request_id=${requestId}`}
             className="w-full h-full border-0"
@@ -51,17 +51,19 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
 
       <TabsContent value="latex" className="mt-0">
         <div className="relative">
-          <Button
-            variant="outline"
-            size="sm"
-            className="absolute right-4 top-4 gap-1.5"
-            onClick={handleCopy}
-          >
-            <Copy className="w-4 h-4" />
-            {copied ? 'Copied!' : 'Copy'}
-          </Button>
+          <div className="sticky top-0 z-10 flex justify-end bg-background/80 backdrop-blur-sm py-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={handleCopy}
+            >
+              <Copy className="w-4 h-4" />
+              {copied ? 'Copied!' : 'Copy'}
+            </Button>
+          </div>
           <pre className="bg-zinc-950 rounded-lg p-4 overflow-x-auto">
-            <code className="text-white text-sm">{latex}</code>
+            <code className="text-white text-sm whitespace-pre-wrap break-words">{latex}</code>
           </pre>
         </div>
       </TabsContent>

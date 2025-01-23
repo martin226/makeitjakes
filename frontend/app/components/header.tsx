@@ -6,9 +6,9 @@ export function Header() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="text-center mb-12 relative"
+      className="text-center mb-8 md:mb-12 relative px-4"
     >
-      <h1 className="text-4xl font-bold tracking-tight mb-4 relative inline-block">
+      <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3 md:mb-4 relative inline-block">
         Make it{' '}
         <span className="relative inline-block">
           <span className="relative z-10 text-blue-700">Jake's</span>
@@ -20,7 +20,7 @@ export function Header() {
           />
         </span>
       </h1>
-      <p className="text-muted-foreground text-lg max-w-[500px]">
+      <p className="text-base md:text-lg text-muted-foreground max-w-[500px] mx-auto">
         Transform your SWE resume into Jake&apos;s elegant LaTeX template with just one click. No
         LaTeX knowledge required.
       </p>
