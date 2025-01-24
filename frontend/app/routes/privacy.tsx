@@ -5,7 +5,7 @@ import { Link } from "@remix-run/react";
 export const meta: MetaFunction = () => {
   return [
     { title: "Privacy Policy - Make It Jake's" },
-    { name: "description", content: "Privacy Policy for Make It Jake's resume transformation service" },
+    { name: "description", content: "Transform your SWE resume into Jake's elegant LaTeX template with just one click. No LaTeX knowledge required." },
   ];
 };
 

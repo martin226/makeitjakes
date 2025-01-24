@@ -1,4 +1,4 @@
-import { json, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node';
+import { json, MetaFunction, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -10,7 +10,17 @@ import {
 } from '@remix-run/react';
 import styles from './tailwind.css?url';
 
-export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Make It Jake's" },
+    { name: "description", content: "Transform your SWE resume into Jake's elegant LaTeX template with just one click. No LaTeX knowledge required." },
+  ];
+};
+
+export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: styles },
+  { rel: 'icon', href: '/favicon.ico?v=4' },
+];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const ENV = {
