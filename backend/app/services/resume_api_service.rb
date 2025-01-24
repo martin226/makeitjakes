@@ -68,8 +68,9 @@ class ResumeApiService
     Rails.logger.info("LaTeX prompt:")
     Rails.logger.info(latex_prompt(extracted_info))
     
-    pre_message = "I'll help you convert the resume information into LaTeX format using Jake's template. Here's the complete LaTeX code:"
+    pre_message = "\\documentclass"
     latex = make_api_request(latex_prompt(extracted_info), pre_message)
+    latex = "\\documentclass#{latex}"
     Rails.logger.info("Successfully generated LaTeX")
     latex
   end
