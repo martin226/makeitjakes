@@ -281,8 +281,6 @@ module ResumePrompts
       You may change certain styling to fit the content, but do not change the structure of the document.
       You do not need to use all the sections, but you should use the same structure and formatting as the example.
 
-      IMPORTANT:
-      If certain information is not present in the resume, omit those fields from the LaTeX output. For example, if a project has no technologies used, omit the technologies used section. If a project has no dates, omit the dates section. Do NOT write "None" or "N/A" in the LaTeX output.
 
       Key sections to update:
       1. Header - Replace with the provided name and contact information
@@ -298,6 +296,7 @@ module ResumePrompts
 
       Return only the complete LaTeX code, starting with \\documentclass and ending with \\end{document}.
       Ensure all LaTeX commands are properly escaped and the document is compilable.
+      IMPORTANT: If certain information is not present in the resume, omit those fields from the LaTeX output. For example, if a project has no technologies used, omit the technologies used section. If a project has no dates, omit the dates section. Do NOT write "None" or "N/A" in the LaTeX output.
       IMPORTANT: Do not include any additional text or comments in the LaTeX output. Do not include any ```latex or ``` in the LaTeX output.
     PROMPT
   end
