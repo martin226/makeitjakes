@@ -20,6 +20,10 @@ type ActionData = {
 export async function loader({ request }: LoaderFunctionArgs) {
   // Get the request URL to determine the base URL
   const url = new URL(request.url);
+  // Force HTTPS only if we're not in development (localhost)
+  if (!url.origin.includes('localhost')) {
+    url.protocol = 'https:';
+  }
   return json({
     API_ORIGIN: url.origin
   });
@@ -79,12 +83,6 @@ export default function Index() {
     if (requestId && !eventSourceRef.current) {
       // Create EventSource URL
       const eventSourceUrl = new URL(`${API_ORIGIN}/api/v1/status/events`);
-      
-      // Force HTTPS only if we're not in development (localhost)
-      // TODO: This is a temporary fix to ensure HTTPS is used. We need to revisit this in the future.
-      if (!API_ORIGIN.includes('localhost')) {
-        eventSourceUrl.protocol = 'https:';
-      }
       eventSourceUrl.searchParams.set('request_id', requestId);
 
       console.log('Creating new EventSource connection:', {
