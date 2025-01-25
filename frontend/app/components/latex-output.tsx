@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Button } from '~/components/ui/button';
-import { Copy, Download, Eye } from 'lucide-react';
+import { Copy, Download, ExternalLink, Eye } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { useLoaderData } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
@@ -81,6 +81,10 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
     URL.revokeObjectURL(url);
   };
 
+  const base64Latex = useMemo(() => {
+    return btoa(latex);
+  }, [latex]);
+
   return (
     <Tabs defaultValue="pdf" className="w-full">
       <TabsList className="mb-4 w-full flex">
@@ -118,6 +122,13 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
       <TabsContent value="latex" className="mt-0">
         <div className="relative">
           <div className="sticky top-0 z-10 flex justify-end gap-2 bg-background/80 backdrop-blur-sm py-2">
+            <form action="https://www.overleaf.com/docs" method="post" target="_blank">
+              <input type="hidden" name="snip_uri" value={`data:application/x-tex;base64,${base64Latex}`} />
+              <Button type="submit" variant="outline" size="sm" className="gap-1.5">
+                <ExternalLink className="w-4 h-4" />
+                Open in Overleaf
+              </Button>
+            </form>
             <Button
               variant="outline"
               size="sm"
