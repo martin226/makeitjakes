@@ -20,6 +20,7 @@ module ResumePrompts
     \setlength{\columnsep}{-1pt}
     \input{glyphtounicode}
     
+    
     %----------FONT OPTIONS----------
     % sans-serif
     % \usepackage[sfdefault]{FiraSans}
@@ -30,6 +31,7 @@ module ResumePrompts
     % serif
     % \usepackage{CormorantGaramond}
     % \usepackage{charter}
+    
     
     \pagestyle{fancy}
     \fancyhf{} % clear all header and footer fields
@@ -107,7 +109,138 @@ module ResumePrompts
     %-------------------------------------------
     %%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
+    
     \begin{document}
+    
+    %----------HEADING----------
+    % \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+    %   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
+    %   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
+    % \end{tabular*}
+    
+    \begin{center}
+        {\Huge \scshape First Last} \\ \vspace{1pt}
+        123 Street Name, Town, State 12345 \\ \vspace{1pt}
+        \small \raisebox{-0.1\height}\faPhone\ 123-456-7890 ~ \href{mailto:x@gmail.com}{\raisebox{-0.2\height}\faEnvelope\  \underline{email@gmail.com}} ~ 
+        \href{https://linkedin.com/in//}{\raisebox{-0.2\height}\faLinkedin\ \underline{linkedin.com/in/username}}  ~
+        \href{https://github.com/}{\raisebox{-0.2\height}\faGithub\ \underline{github.com/username}}
+        \vspace{-8pt}
+    \end{center}
+    
+    
+    %-----------EDUCATION-----------
+    \section{Education}
+      \resumeSubHeadingListStart
+        \resumeSubheading
+          {State University}{Sep. 2017 -- May 2021}
+          {Bachelor of Science in Computer Science}{City, State}
+      \resumeSubHeadingListEnd
+    
+    %------RELEVANT COURSEWORK-------
+    \section{Relevant Coursework}
+        %\resumeSubHeadingListStart
+            \begin{multicols}{4}
+                \begin{itemize}[itemsep=-5pt, parsep=3pt]
+                    \item\small Data Structures
+                    \item Software Methodology
+                    \item Algorithms Analysis
+                    \item Database Management
+                    \item Artificial Intelligence
+                    \item Internet Technology
+                    \item Systems Programming
+                    \item Computer Architecture
+                \end{itemize}
+            \end{multicols}
+            \vspace*{2.0\multicolsep}
+        %\resumeSubHeadingListEnd
+    
+    
+    %-----------EXPERIENCE-----------
+    \section{Experience}
+      \resumeSubHeadingListStart
+    
+        \resumeSubheading
+          {Electronics Company}{May 2020 -- August 2020}
+          {Software Engineer Intern}{City, State}
+          \resumeItemListStart
+            \resumeItem{Developed a service to automatically perform a set of unit tests daily on a product in development in order to decrease time needed for team members to identify and fix bugs/issues.}
+            \resumeItem{Incorporated scripts using Python and PowerShell to aggregate XML test results into an organized format and to load the latest build code onto the hardware, so that daily testing can be performed.}
+            \resumeItem{Utilized Jenkins to provide a continuous integration service in order to automate the entire process of loading the latest build code and test files, running the tests, and generating a report of the results once per day.}
+            \resumeItem{Explored ways to visualize and send a daily report of test results to team members  using HTML, Javascript, and CSS.}
+          \resumeItemListEnd
+    
+        \resumeSubheading
+          {Startup, Inc}{May 2019 -- August 2019}
+          {Front End Developer Intern}{City, State}
+          \resumeItemListStart
+            \resumeItem{Assisted in development of the front end of a mobile application for iOS/Android using Dart and the Flutter framework.}
+            \resumeItem{Worked with Google Firebase to manage user inputted data across multiple platforms including web and mobile apps.}
+            \resumeItem{Collaborated with team members using version control systems such as Git to organize modifications and assign tasks.}
+            \resumeItem{Utilized Android Studio as a development environment in order to visualize the application in both iOS and Android.}
+        \resumeItemListEnd
+        
+      \resumeSubHeadingListEnd
+    \vspace{-16pt}
+    
+    %-----------PROJECTS-----------
+    \section{Projects}
+        \vspace{-5pt}
+        \resumeSubHeadingListStart
+          \resumeProjectHeading
+              {\textbf{Gym Reservation Bot} $|$ \emph{Python, Selenium, Google Cloud Console}}{January 2021}
+              \resumeItemListStart
+                \resumeItem{Developed an automatic bot using Python and Google Cloud Console to register myself for a timeslot at my school gym.}
+                \resumeItem{Implemented Selenium to create an instance of Chrome in order to interact with the correct elements of the web page.}
+                \resumeItem{Created a Linux virtual machine to run on Google Cloud so that the program is able to run everyday from the cloud.}
+                \resumeItem{Used Cron to schedule the program to execute automatically at 11 AM every morning so a reservation is made for me.}
+              \resumeItemListEnd
+              \vspace{-13pt}
+          \resumeProjectHeading
+              {\textbf{Ticket Price Calculator App} $|$ \emph{Java, Android Studio}}{November 2020}
+              \resumeItemListStart
+                \resumeItem{Created an Android application using Java and Android Studio to calculate ticket prices for trips to museums in NYC.}
+                \resumeItem{Processed user inputted information in the back-end of the app to return a subtotal price based on the tickets selected.}
+                \resumeItem{Utilized the layout editor to create a UI for the application in order to allow different scenes to interact with each other.}
+              \resumeItemListEnd 
+              \vspace{-13pt}
+              \resumeProjectHeading
+              {\textbf{Transaction Management GUI} $|$ \emph{Java, Eclipse, JavaFX}}{October 2020}
+              \resumeItemListStart
+                \resumeItem{Designed a sample banking transaction system using Java to simulate the common functions of using a bank account.}
+                \resumeItem{Used JavaFX to create a GUI that supports actions such as creating an account, deposit, withdraw, list all acounts, etc.}
+                \resumeItem{Implemented object-oriented programming practices such as inheritance to create different account types and databases.}
+              \resumeItemListEnd 
+        \resumeSubHeadingListEnd
+    \vspace{-15pt}
+    
+    
+    %
+    %-----------PROGRAMMING SKILLS-----------
+    \section{Technical Skills}
+    \begin{itemize}[leftmargin=0.15in, label={}]
+        \small{\item{
+        \textbf{Languages}{: Python, Java, C, HTML/CSS, JavaScript, SQL} \\
+        \textbf{Developer Tools}{: VS Code, Eclipse, Google Cloud Platform, Android Studio} \\
+        \textbf{Technologies/Frameworks}{: Linux, Jenkins, GitHub, JUnit, WordPress} \\
+        }}
+    \end{itemize}
+    \vspace{-16pt}
+    
+    
+    %-----------INVOLVEMENT---------------
+    \section{Leadership / Extracurricular}
+        \resumeSubHeadingListStart
+            \resumeSubheading{Fraternity}{Spring 2020 -- Present}{President}{University Name}
+                \resumeItemListStart
+                    \resumeItem{Achieved a 4 star fraternity ranking by the Office of Fraternity and Sorority Affairs (highest possible ranking).}
+                    \resumeItem{Managed executive board of 5 members and ran weekly meetings to oversee progress in essential parts of the chapter.}
+                    \resumeItem{Led chapter of 30+ members to work towards goals that improve and promote community service, academics, and unity.}
+                \resumeItemListEnd
+            
+        \resumeSubHeadingListEnd
+    
+    
+    \end{document}
   LATEX
 
   def self.extraction_prompt(resume_content)
@@ -140,11 +273,14 @@ module ResumePrompts
       You are a LaTeX expert. Convert the following structured resume information into Jake's Resume LaTeX format.
       Follow these specific formatting requirements and use the template code below as your base:
 
-      Here is Jake's original LaTeX template code for reference:
+      Here is an example resume formatted in Jake's LaTeX template:
       #{JAKES_TEMPLATE}
 
-      Follow the template exactly, maintaining all the packages, custom commands, and formatting.
-      Replace only the content while keeping all the styling and structure identical.
+      Follow the template, maintaining all the packages, custom commands, and formatting.
+      Replace only the content while keeping most of the styling and structure identical.
+      You may change certain styling to fit the content, but do not change the structure of the document.
+      You do not need to use all the sections, but you should use the same structure and formatting as the example.
+      If certain information is not present in the resume, omit those fields from the LaTeX output. For example, if a project has no technologies used, omit the technologies used section. If a project has no dates, omit the dates section.
 
       Key sections to update:
       1. Header - Replace with the provided name and contact information
