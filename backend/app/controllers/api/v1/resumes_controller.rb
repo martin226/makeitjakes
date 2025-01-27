@@ -2,10 +2,6 @@ module Api
   module V1
     class ResumesController < ApplicationController
       skip_before_action :verify_authenticity_token
-      # before_action :check_rate_limit, only: [:create]
-      
-      RATE_LIMIT = 5  # requests
-      RATE_LIMIT_PERIOD = 900  # 15 minutes in seconds
 
       def create
         file = params[:file]
@@ -123,30 +119,6 @@ module Api
         ensure
           # Clean up temporary directory
           FileUtils.remove_entry dir if dir
-        end
-      end
-
-      private
-
-      def check_rate_limit
-        # Get the original client IP from the X-Forwarded-For header
-        ip = request.headers['X-Forwarded-For']&.split(',')&.first || request.remote_ip
-        key = "rate_limit:#{ip}"
-        count = $redis.get(key).to_i
-
-        if count >= RATE_LIMIT
-          Rails.logger.warn("Rate limit exceeded for IP: #{ip}")
-          render json: { error: 'Rate limit exceeded. Please try again in an hour.' }, status: :too_many_requests
-          return
-        end
-
-        # Increment the counter
-        if count == 0
-          # First request, set expiry
-          $redis.setex(key, RATE_LIMIT_PERIOD, 1)
-        else
-          # Increment existing counter
-          $redis.incr(key)
         end
       end
     end
