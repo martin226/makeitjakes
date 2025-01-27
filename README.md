@@ -135,7 +135,7 @@ The backend provides RESTful API endpoints for resume processing:
 - `POST /api/v1/resumes` - Upload a resume file for processing
   - Accepts multipart form data with a `file` parameter
   - Returns a `request_id` for tracking the processing status
-  - Rate limited to 5 requests per hour per IP
+  - Rate limited to 5 requests per 15 minutes per IP
 
 - `GET /api/v1/resumes/preview?request_id=<request_id>` - Preview the processed resume
   - Returns PDF file for inline display

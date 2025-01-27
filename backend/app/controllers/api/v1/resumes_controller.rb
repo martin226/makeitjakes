@@ -5,7 +5,7 @@ module Api
       before_action :check_rate_limit, only: [:create]
       
       RATE_LIMIT = 5  # requests
-      RATE_LIMIT_PERIOD = 3600  # 1 hour in seconds
+      RATE_LIMIT_PERIOD = 900  # 15 minutes in seconds
 
       def create
         file = params[:file]
@@ -129,7 +129,8 @@ module Api
       private
 
       def check_rate_limit
-        ip = request.remote_ip
+        # Get the original client IP from the X-Forwarded-For header
+        ip = request.headers['X-Forwarded-For']&.split(',')&.first || request.remote_ip
         key = "rate_limit:#{ip}"
         count = $redis.get(key).to_i
 
