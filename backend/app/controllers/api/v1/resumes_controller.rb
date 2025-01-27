@@ -2,7 +2,7 @@ module Api
   module V1
     class ResumesController < ApplicationController
       skip_before_action :verify_authenticity_token
-      before_action :check_rate_limit, only: [:create]
+      # before_action :check_rate_limit, only: [:create]
       
       RATE_LIMIT = 5  # requests
       RATE_LIMIT_PERIOD = 900  # 15 minutes in seconds
