@@ -14,8 +14,8 @@ class ResumeFormatterService
 
   def format
     content = extract_text_from_file
-    llama_service = LlamaApiService.new(@request_id)
-    llama_service.format_resume(content)
+    gemini_service = GeminiApiService.new(@request_id)
+    gemini_service.format_resume(content)
   rescue StandardError => e
     handle_error(e)
   end
