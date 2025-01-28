@@ -27,7 +27,7 @@ steps:
       - '--set-env-vars'
       - 'RAILS_ENV=production,RAILS_LOG_TO_STDOUT=true,RAILS_SERVE_STATIC_FILES=true,REDIS_URL=redis://10.188.33.171:6379'
       - '--set-secrets'
-      - 'RAILS_MASTER_KEY=rails-master-key:latest,SECRET_KEY_BASE=rails-secret-key-base:latest,ANTHROPIC_API_KEY=anthropic-api-key:latest'
+      - 'RAILS_MASTER_KEY=rails-master-key:latest,SECRET_KEY_BASE=rails-secret-key-base:latest,ANTHROPIC_API_KEY=anthropic-api-key:latest,FIREWORKS_API_KEY=fireworks-api-key:latest'
 
   # Deploy frontend to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'

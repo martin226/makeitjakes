@@ -116,6 +116,7 @@ Make sure to set up the following environment variables:
 
 ### Backend (.env)
 - `ANTHROPIC_API_KEY` - Anthropic API key for resume processing
+- `FIREWORKS_API_KEY` - Fireworks Llama API key for resume processing
 - `REDIS_URL` - Redis connection URL
 - `RAILS_ENV` - Rails environment (development/production)
 - `RAILS_LOG_TO_STDOUT` - Enable logging to stdout in production
