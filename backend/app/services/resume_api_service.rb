@@ -65,8 +65,6 @@ class ResumeApiService
 
   def generate_latex(extracted_info)
     Rails.logger.info("Making API request for LaTeX generation...")
-    Rails.logger.info("LaTeX prompt:")
-    Rails.logger.info(latex_prompt(extracted_info))
     
     pre_message = "\\documentclass"
     latex = make_api_request(latex_prompt(extracted_info), pre_message)

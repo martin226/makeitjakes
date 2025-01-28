@@ -17,7 +17,7 @@ class LlamaApiService < ResumeApiService
 
     request_body = {
       model: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
-      max_tokens: 4000,
+      max_tokens: 3000,
       messages: messages,
     }
     
