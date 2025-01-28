@@ -7,6 +7,7 @@ import { cn } from '~/lib/utils';
 import { useLoaderData } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { PDFViewer } from './pdf-viewer.client';
+import { Buffer } from 'buffer';
 
 interface LatexOutputProps {
   latex: string;
@@ -82,7 +83,7 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
   };
 
   const base64Latex = useMemo(() => {
-    return btoa(latex);
+    return Buffer.from(latex, 'utf-8').toString('base64');
   }, [latex]);
 
   return (

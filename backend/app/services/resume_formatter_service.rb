@@ -14,8 +14,8 @@ class ResumeFormatterService
 
   def format
     content = extract_text_from_file
-    anthropic_service = AnthropicApiService.new(@request_id)
-    anthropic_service.format_resume(content)
+    llama_service = LlamaApiService.new(@request_id)
+    llama_service.format_resume(content)
   rescue StandardError => e
     handle_error(e)
   end
@@ -84,7 +84,8 @@ class ResumeFormatterService
          'Unable to read DOC file', 'Unable to read DOCX file'
       raise error
     else
-      Rails.logger.error("Error processing resume: #{error.message}")
+      # Rails.logger.error("Error processing resume: #{error.message}")
+      raise error
       raise 'An error occurred while processing the resume'
     end
   end

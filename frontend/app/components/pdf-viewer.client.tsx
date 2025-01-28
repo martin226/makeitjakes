@@ -27,7 +27,7 @@ export function PDFViewer({ pdfData, loading }: PDFViewerProps) {
   if (!pdfData) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        No PDF available
+        No PDF available. Try opening in Overleaf!
       </div>
     );
   }

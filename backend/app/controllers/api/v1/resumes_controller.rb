@@ -39,7 +39,7 @@ module Api
                   :bad_request
                 when 'Invalid API key'
                   :unauthorized
-                when 'Rate limit exceeded'
+                when 'Rate limit exceeded for Fireworks Llama API', 'Rate limit exceeded for Anthropic API'
                   :too_many_requests
                 else
                   :internal_server_error

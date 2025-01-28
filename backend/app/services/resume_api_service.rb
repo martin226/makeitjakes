@@ -70,7 +70,7 @@ class ResumeApiService
     
     pre_message = "\\documentclass"
     latex = make_api_request(latex_prompt(extracted_info), pre_message)
-    latex = "\\documentclass#{latex}"
+    latex = latex.start_with?("\\documentclass") ? latex : "\\documentclass#{latex}"
     Rails.logger.info("Successfully generated LaTeX")
     latex
   end

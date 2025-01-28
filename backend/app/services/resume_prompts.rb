@@ -265,6 +265,11 @@ module ResumePrompts
 
       Resume Content:
       #{resume_content}
+
+      IMPORTANT: Do not include any additional text or comments in the JSON output. Do not include any ```json or ``` in the output.
+      IMPORTANT: Provide ONLY the JSON output, no other text or comments.
+
+      {
     PROMPT
   end
 
@@ -280,6 +285,7 @@ module ResumePrompts
       Replace only the content while keeping most of the styling and structure identical.
       You may change certain styling to fit the content, but do not change the structure of the document.
       You do not need to use all the sections, but you should use the same structure and formatting as the example.
+      For empty content, omit the section entirely. For example, if a job has no bullet points, omit the \\resumeItemListStart and \\resumeItemListEnd.
 
 
       Key sections to update:
@@ -296,8 +302,13 @@ module ResumePrompts
 
       Return only the complete LaTeX code, starting with \\documentclass and ending with \\end{document}.
       Ensure all LaTeX commands are properly escaped and the document is compilable.
+
+      IMPORTANT: Omit non-Unicode characters from the LaTeX output.
+      IMPORTANT: Escape all characters that are not allowed in LaTeX. These include: \ { } $ % ^ ~ _ # & |. You can escape them by adding a backslash before the character.
       IMPORTANT: If certain information is not present in the resume, omit those fields from the LaTeX output. For example, if a project has no technologies used, omit the technologies used section. If a project has no dates, omit the dates section. Do NOT write "None" or "N/A" in the LaTeX output.
       IMPORTANT: Do not include any additional text or comments in the LaTeX output. Do not include any ```latex or ``` in the LaTeX output.
+      IMPORTANT: Provide ONLY the LaTeX output, no other text or comments.
+      \\documentclass
     PROMPT
   end
 end 

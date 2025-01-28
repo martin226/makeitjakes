@@ -62,7 +62,7 @@ export default function Privacy() {
               <svg className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <span className="text-lg text-slate-700">We process your uploaded resumes through Anthropic's API to transform them into Jake's elegant LaTeX template.</span>
+              <span className="text-lg text-slate-700">We process your uploaded resumes through either Fireworks's Llama or Anthropic's API to transform them into Jake's elegant LaTeX template.</span>
             </li>
             <li className="flex items-start gap-4">
               <svg className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +144,7 @@ export default function Privacy() {
                   <svg className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  <span className="text-slate-700">Your resume is processed through Anthropic's API to perform the transformation</span>
+                  <span className="text-slate-700">Your resume is processed through either Fireworks's Llama or Anthropic's API to perform the transformation</span>
                 </li>
                 <li className="flex items-start gap-4">
                   <svg className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,10 +1,10 @@
-class AnthropicApiService < ResumeApiService
-  ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
+class LlamaApiService < ResumeApiService
+  LLAMA_API_URL = 'https://api.fireworks.ai/inference/v1/chat/completions'
   
   def initialize(request_id = nil)
     super(request_id)
-    @api_key = ENV['ANTHROPIC_API_KEY']
-    raise 'ANTHROPIC_API_KEY not set in environment' if @api_key.nil?
+    @api_key = ENV['FIREWORKS_API_KEY']
+    raise 'FIREWORKS_API_KEY not set in environment' if @api_key.nil?
   end
 
   private
@@ -15,33 +15,28 @@ class AnthropicApiService < ResumeApiService
       content: prompt
     }]
 
-    if pre_message
-      messages << {
-        role: 'assistant',
-        content: pre_message
-      }
-    end
-
     request_body = {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
       max_tokens: 4000,
-      messages: messages
+      messages: messages,
     }
     
     response = RestClient.post(
-      ANTHROPIC_API_URL,
+      LLAMA_API_URL,
       request_body.to_json,
       {
+        'Accept' => 'application/json',
         'Content-Type' => 'application/json',
-        'x-api-key' => @api_key,
-        'anthropic-version' => '2023-06-01'
+        'Authorization' => "Bearer #{@api_key}"
       }
     )
     
     parsed_response = JSON.parse(response.body)
-    raise "Empty response from Anthropic API" if parsed_response['content'].nil? || parsed_response['content'].empty?
-    
-    parsed_response.dig('content', 0, 'text')
+    raise "Empty response from Llama API" if parsed_response['choices'].nil? || parsed_response['choices'].empty?
+
+    content = parsed_response.dig('choices', 0, 'message', 'content')
+    match = content.match(/```.*?\n(.*)\n```/m)
+    match ? match[1].strip : content
   rescue RestClient::ExceptionWithResponse => e
     handle_api_error(e)
   end
@@ -60,8 +55,8 @@ class AnthropicApiService < ResumeApiService
 
     case error.response&.code
     when 401 then raise 'Invalid API key'
-    when 429 then raise 'Rate limit exceeded for Anthropic API'
-    else raise "Anthropic API error: #{error_message}"
+    when 429 then raise 'Rate limit exceeded for Fireworks Llama API'
+    else raise "Llama API error: #{error_message}"
     end
   end
-end
+end 
