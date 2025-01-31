@@ -12,8 +12,11 @@ class ResumeFormatterService
     validate_file!
   end
 
-  def format
+  def format(mutex, condition)
     content = extract_text_from_file
+    mutex.synchronize do
+      condition.signal # Signal that the file has been read
+    end
     gemini_service = GeminiApiService.new(@request_id)
     gemini_service.format_resume(content)
   rescue StandardError => e

@@ -16,17 +16,26 @@ module Api
         
         # Send initial status update immediately
         $redis.set("resume_status:#{request_id}", "Starting resume formatting process...")
+
+        # Create a mutex and condition variable to synchronize the thread
+        # This is used to ensure that the file is read before the response is sent and file is closed
+        mutex = Mutex.new
+        condition = ConditionVariable.new
         
         # Process the resume in a background thread to allow the response to be sent immediately
         Thread.new do
           begin
-            latex_content = ResumeFormatterService.new(file, request_id).format
+            latex_content = ResumeFormatterService.new(file, request_id).format(mutex, condition)
             $redis.set("resume_status:#{request_id}", "Resume formatting completed successfully!")
             $redis.set("resume_result:#{request_id}", { latex: latex_content }.to_json)
           rescue StandardError => e
             error_message = e.message
             $redis.set("resume_status:#{request_id}", "Error: #{error_message}")
           end
+        end
+
+        mutex.synchronize do
+          condition.wait(mutex)
         end
 
         # Return immediately with the request ID
