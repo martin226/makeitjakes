@@ -41,7 +41,14 @@ class AnthropicApiService < ResumeApiService
     parsed_response = JSON.parse(response.body)
     raise "Empty response from Anthropic API" if parsed_response['content'].nil? || parsed_response['content'].empty?
     
-    parsed_response.dig('content', 0, 'text')
+    # More robust content extraction with type checking
+    content = parsed_response['content']
+    first_content = content.is_a?(Array) ? content[0] : content
+    text = first_content.is_a?(Hash) ? first_content['text'] : first_content.to_s
+
+    # Clean up the content if it contains markdown code blocks
+    match = text.to_s.match(/```.*?\n(.*)\n```/m)
+    match ? match[1].strip : text.to_s
   rescue RestClient::ExceptionWithResponse => e
     handle_api_error(e)
   end

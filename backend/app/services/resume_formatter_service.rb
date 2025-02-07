@@ -47,8 +47,28 @@ class ResumeFormatterService
   end
 
   def extract_text_from_pdf
-    reader = PDF::Reader.new(@file.path)
-    reader.pages.map(&:text).join("\n")
+    begin
+      reader = PDF::Reader.new(@file.path)
+      text = ""
+      reader.pages.each_with_index do |page, index|
+        begin
+          page_text = page.text.to_s
+          text << page_text
+          text << "\n" unless page_text.end_with?("\n")
+        rescue StandardError => e
+          Rails.logger.error("Error reading page #{index + 1}: #{e.message}")
+        end
+      end
+      text = clean_text(text)
+      raise 'No text content found in PDF' if text.strip.empty?
+      text
+    rescue PDF::Reader::MalformedPDFError, PDF::Reader::UnsupportedFeatureError => e
+      Rails.logger.error("PDF parsing error: #{e.message}")
+      raise 'Unable to read PDF file: The file appears to be corrupted or in an unsupported format'
+    rescue StandardError => e
+      Rails.logger.error("Error extracting text from PDF file: #{e.message}")
+      raise 'Unable to read PDF file'
+    end
   end
 
   def extract_text_from_doc

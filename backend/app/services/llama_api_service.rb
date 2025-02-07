@@ -34,9 +34,13 @@ class LlamaApiService < ResumeApiService
     parsed_response = JSON.parse(response.body)
     raise "Empty response from Llama API" if parsed_response['choices'].nil? || parsed_response['choices'].empty?
 
-    content = parsed_response.dig('choices', 0, 'message', 'content')
-    match = content.match(/```.*?\n(.*)\n```/m)
-    match ? match[1].strip : content
+    choices = parsed_response['choices']
+    first_choice = choices.is_a?(Array) ? choices[0] : choices
+    message = first_choice.is_a?(Hash) ? first_choice['message'] : first_choice
+    content = message.is_a?(Hash) ? message['content'] : message.to_s
+
+    match = content.to_s.match(/```.*?\n(.*)\n```/m)
+    match ? match[1].strip : content.to_s
   rescue RestClient::ExceptionWithResponse => e
     handle_api_error(e)
   end
