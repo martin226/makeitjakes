@@ -409,6 +409,7 @@ DEPENDENCIES
   jbuilder
   kamal
   msworddoc-extractor
+  net-smtp (~> 0.5.0)
   pdf-reader
   propshaft
   puma (>= 5.0)
