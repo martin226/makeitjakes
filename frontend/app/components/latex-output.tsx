@@ -20,6 +20,7 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
   const [copied, setCopied] = useState(false);
   const [pdfData, setPdfData] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [personName, setPersonName] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPdf = async () => {
@@ -32,6 +33,21 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
         
         if (data.pdf) {
           setPdfData(`data:application/pdf;base64,${data.pdf}`);
+          if (data.name) {
+            try {
+              // Try to parse as JSON first
+              const nameObj = JSON.parse(data.name);
+              const first = nameObj.firstName || nameObj.first_name || nameObj.first;
+              const last = nameObj.lastName || nameObj.last_name || nameObj.last;
+              if (first && last) {
+                setPersonName(`${first} ${last}`);
+              } else {
+                setPersonName(null);
+              }
+            } catch (e) {
+              setPersonName(data.name);
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching PDF:', error);
@@ -75,7 +91,16 @@ export function LatexOutput({ latex, className, requestId }: LatexOutputProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'resume.pdf';
+    const formatName = (name: string) => {
+      return name
+        .split(/\s+/)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join('');
+    };
+    const fileName = personName 
+      ? `${formatName(personName)}_Resume.pdf`
+      : 'resume.pdf';
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

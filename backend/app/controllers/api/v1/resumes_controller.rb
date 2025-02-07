@@ -115,9 +115,13 @@ module Api
             $redis.set(pdf_key, pdf_content)
             $redis.expire(pdf_key, 3600) # 1 hour expiry
             
+            # Get the name from Redis
+            name = $redis.get("resume_name:#{request_id}") || { first: "Unknown", last: "User" }.to_json
+            
             render json: { 
               pdf: Base64.strict_encode64(pdf_content),
-              contentType: 'application/pdf'
+              contentType: 'application/pdf',
+              name: name  # name is already in JSON format from Redis
             }
           else
             Rails.logger.error("PDF file not found after compilation")

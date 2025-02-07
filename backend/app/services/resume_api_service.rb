@@ -54,6 +54,13 @@ class ResumeApiService
       raise parsed_json['error']  # This will raise "Not a resume" directly
     end
 
+    # Store the extracted name in Redis
+    if parsed_json['name']
+      $redis.set("resume_name:#{@request_id}", parsed_json['name'].to_json)
+      $redis.expire("resume_name:#{@request_id}", 3600) # 1 hour expiry
+      Rails.logger.info("Stored name in Redis: #{parsed_json['name'].to_json}")
+    end
+
     Rails.logger.info("Successfully parsed JSON response")
     parsed_json
   rescue JSON::ParserError => e
