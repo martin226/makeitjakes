@@ -16,7 +16,7 @@ class GeminiApiService < ResumeApiService
     }]
 
     request_body = {
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       max_tokens: 3000,
       messages: messages,
     }
