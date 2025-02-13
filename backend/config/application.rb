@@ -1,27 +1,31 @@
-require_relative "boot"
+# Set up Gemfile path
+ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 
-require "rails/all"
+# Set up gems listed in the Gemfile
+require "bundler/setup"
+require "bootsnap/setup" # Speed up boot time by caching expensive operations
 
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
+# Only require the frameworks we need
+require "action_controller/railtie"
+require "action_view/railtie"
+require "rails/test_unit/railtie"
+require "action_cable/engine"
+
+# Require the gems listed in Gemfile
 Bundler.require(*Rails.groups)
 
 module Backend
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
+    # Initialize configuration defaults for originally generated Rails version
     config.load_defaults 8.0
 
-    # Please, add to the `ignore` list any other `lib` subdirectories that do
-    # not contain `.rb` files, or that should not be reloaded or eager loaded.
-    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    # Autoload lib directory
     config.autoload_lib(ignore: %w[assets tasks])
 
-    # Configuration for the application, engines, and railties goes here.
-    #
-    # These settings can be overridden in specific environments using the files
-    # in config/environments, which are processed later.
-    #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
+    # Configure timezone if needed
+    # config.time_zone = "UTC"
   end
 end
+
+# Initialize the Rails application
+Rails.application.initialize!
