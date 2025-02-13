@@ -19,6 +19,7 @@ class LlamaApiService < ResumeApiService
       model: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
       max_tokens: 3000,
       messages: messages,
+      temperature: 0.2
     }
     
     response = RestClient.post(

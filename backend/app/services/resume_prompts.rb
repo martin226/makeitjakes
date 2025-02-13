@@ -1,246 +1,208 @@
 module ResumePrompts
   # Jake's original LaTeX template code
   JAKES_TEMPLATE = <<~'LATEX'
-    \documentclass[letterpaper,11pt]{article}
+\documentclass[letterpaper,11pt]{article}
 
-    \usepackage{latexsym}
-    \usepackage[empty]{fullpage}
-    \usepackage{titlesec}
-    \usepackage{marvosym}
-    \usepackage[usenames,dvipsnames]{color}
-    \usepackage{verbatim}
-    \usepackage{enumitem}
-    \usepackage[hidelinks]{hyperref}
-    \usepackage{fancyhdr}
-    \usepackage[english]{babel}
-    \usepackage{tabularx}
-    \usepackage{fontawesome5}
-    \usepackage{multicol}
-    \setlength{\multicolsep}{-3.0pt}
-    \setlength{\columnsep}{-1pt}
-    \input{glyphtounicode}
-    
-    
-    %----------FONT OPTIONS----------
-    % sans-serif
-    % \usepackage[sfdefault]{FiraSans}
-    % \usepackage[sfdefault]{roboto}
-    % \usepackage[sfdefault]{noto-sans}
-    % \usepackage[default]{sourcesanspro}
-    
-    % serif
-    % \usepackage{CormorantGaramond}
-    % \usepackage{charter}
-    
-    
-    \pagestyle{fancy}
-    \fancyhf{} % clear all header and footer fields
-    \fancyfoot{}
-    \renewcommand{\headrulewidth}{0pt}
-    \renewcommand{\footrulewidth}{0pt}
-    
-    % Adjust margins
-    \addtolength{\oddsidemargin}{-0.6in}
-    \addtolength{\evensidemargin}{-0.5in}
-    \addtolength{\textwidth}{1.19in}
-    \addtolength{\topmargin}{-.7in}
-    \addtolength{\textheight}{1.4in}
-    
-    \urlstyle{same}
-    
-    \raggedbottom
-    \raggedright
-    \setlength{\tabcolsep}{0in}
-    
-    % Sections formatting
-    \titleformat{\section}{
-      \vspace{-4pt}\scshape\raggedright\large\bfseries
-    }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-    
-    % Ensure that generate pdf is machine readable/ATS parsable
-    \pdfgentounicode=1
-    
-    %-------------------------
-    % Custom commands
-    \newcommand{\resumeItem}[1]{
-      \item\small{
-        {#1 \vspace{-2pt}}
-      }
-    }
-    
-    \newcommand{\classesList}[4]{
-        \item\small{
-            {#1 #2 #3 #4 \vspace{-2pt}}
-      }
-    }
-    
-    \newcommand{\resumeSubheading}[4]{
-      \vspace{-2pt}\item
-        \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
-          \textbf{#1} & \textbf{\small #2} \\
-          \textit{\small#3} & \textit{\small #4} \\
-        \end{tabular*}\vspace{-7pt}
-    }
-    
-    \newcommand{\resumeSubSubheading}[2]{
-        \item
-        \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-          \textit{\small#1} & \textit{\small #2} \\
-        \end{tabular*}\vspace{-7pt}
-    }
-    
-    \newcommand{\resumeProjectHeading}[2]{
-        \item
-        \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
-          \small#1 & \textbf{\small #2}\\
-        \end{tabular*}\vspace{-7pt}
-    }
-    
-    \newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
-    
-    \renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
-    \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-    
-    \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
-    \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-    \newcommand{\resumeItemListStart}{\begin{itemize}}
-    \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
-    
-    %-------------------------------------------
-    %%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    
-    \begin{document}
-    
-    %----------HEADING----------
-    % \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-    %   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
-    %   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
-    % \end{tabular*}
-    
-    \begin{center}
-        {\Huge \scshape First Last} \\ \vspace{1pt}
-        123 Street Name, Town, State 12345 \\ \vspace{1pt}
-        \small \raisebox{-0.1\height}\faPhone\ 123-456-7890 ~ \href{mailto:x@gmail.com}{\raisebox{-0.2\height}\faEnvelope\  \underline{email@gmail.com}} ~ 
-        \href{https://linkedin.com/in//}{\raisebox{-0.2\height}\faLinkedin\ \underline{linkedin.com/in/username}}  ~
-        \href{https://github.com/}{\raisebox{-0.2\height}\faGithub\ \underline{github.com/username}}
-        \vspace{-8pt}
-    \end{center}
-    
-    
-    %-----------EDUCATION-----------
-    \section{Education}
-      \resumeSubHeadingListStart
-        \resumeSubheading
-          {State University}{Sep. 2017 -- May 2021}
-          {Bachelor of Science in Computer Science}{City, State}
-      \resumeSubHeadingListEnd
-    
-    %------RELEVANT COURSEWORK-------
-    \section{Relevant Coursework}
-        %\resumeSubHeadingListStart
-            \begin{multicols}{4}
-                \begin{itemize}[itemsep=-5pt, parsep=3pt]
-                    \item\small Data Structures
-                    \item Software Methodology
-                    \item Algorithms Analysis
-                    \item Database Management
-                    \item Artificial Intelligence
-                    \item Internet Technology
-                    \item Systems Programming
-                    \item Computer Architecture
-                \end{itemize}
-            \end{multicols}
-            \vspace*{2.0\multicolsep}
-        %\resumeSubHeadingListEnd
-    
-    
-    %-----------EXPERIENCE-----------
-    \section{Experience}
-      \resumeSubHeadingListStart
-    
-        \resumeSubheading
-          {Electronics Company}{May 2020 -- August 2020}
-          {Software Engineer Intern}{City, State}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Jake Ryan} \\ \vspace{1pt}
+    \small 123-456-7890 $|$ \href{mailto:x@x.com}{\underline{jake@su.edu}} $|$ 
+    \href{https://linkedin.com/in/...}{\underline{linkedin.com/in/jake}} $|$
+    \href{https://github.com/...}{\underline{github.com/jake}}
+\end{center}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Southwestern University}{Georgetown, TX}
+      {Bachelor of Arts in Computer Science, Minor in Business}{Aug. 2018 -- May 2021}
+    \resumeSubheading
+      {Blinn College}{Bryan, TX}
+      {Associate's in Liberal Arts}{Aug. 2014 -- May 2018}
+  \resumeSubHeadingListEnd
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Undergraduate Research Assistant}{June 2020 -- Present}
+      {Texas A\&M University}{College Station, TX}
+      \resumeItemListStart
+        \resumeItem{Developed a REST API using FastAPI and PostgreSQL to store data from learning management systems}
+        \resumeItem{Developed a full-stack web application using Flask, React, PostgreSQL and Docker to analyze GitHub data}
+        \resumeItem{Explored ways to visualize GitHub collaboration in a classroom setting}
+      \resumeItemListEnd
+      
+% -----------Multiple Positions Heading-----------
+% Example of how to add multiple positions to a job:
+%    \resumeSubSubheading
+%     {Software Engineer I}{Oct 2014 - Sep 2016}
+%     \resumeItemListStart
+%        \resumeItem{Apache Beam}
+%          {Apache Beam is a unified model for defining both batch and streaming data-parallel processing pipelines}
+%     \resumeItemListEnd
+%    \resumeSubHeadingListEnd
+%-------------------------------------------
+
+    \resumeSubheading
+      {Information Technology Support Specialist}{Sep. 2018 -- Present}
+      {Southwestern University}{Georgetown, TX}
+      \resumeItemListStart
+        \resumeItem{Communicate with managers to set up campus computers used on campus}
+        \resumeItem{Assess and troubleshoot computer problems brought by students, faculty and staff}
+        \resumeItem{Maintain upkeep of computers, classroom equipment, and 200 printers across campus}
+    \resumeItemListEnd
+
+    \resumeSubheading
+      {Artificial Intelligence Research Assistant}{May 2019 -- July 2019}
+      {Southwestern University}{Georgetown, TX}
+      \resumeItemListStart
+        \resumeItem{Explored methods to generate video game dungeons based off of \emph{The Legend of Zelda}}
+        \resumeItem{Developed a game in Java to test the generated dungeons}
+        \resumeItem{Contributed 50K+ lines of code to an established codebase via Git}
+        \resumeItem{Conducted  a human subject study to determine which video game dungeon generation technique is enjoyable}
+        \resumeItem{Wrote an 8-page paper and gave multiple presentations on-campus}
+        \resumeItem{Presented virtually to the World Conference on Computational Intelligence}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Gitlytics} $|$ \emph{Python, Flask, React, PostgreSQL, Docker}}{June 2020 -- Present}
           \resumeItemListStart
-            \resumeItem{Developed a service to automatically perform a set of unit tests daily on a product in development in order to decrease time needed for team members to identify and fix bugs/issues.}
-            \resumeItem{Incorporated scripts using Python and PowerShell to aggregate XML test results into an organized format and to load the latest build code onto the hardware, so that daily testing can be performed.}
-            \resumeItem{Utilized Jenkins to provide a continuous integration service in order to automate the entire process of loading the latest build code and test files, running the tests, and generating a report of the results once per day.}
-            \resumeItem{Explored ways to visualize and send a daily report of test results to team members  using HTML, Javascript, and CSS.}
+            \resumeItem{Developed a full-stack web application using with Flask serving a REST API with React as the frontend}
+            \resumeItem{Implemented GitHub OAuth to get data from user’s repositories}
+            \resumeItem{Visualized GitHub data to show collaboration}
+            \resumeItem{Used Celery and Redis for asynchronous tasks}
           \resumeItemListEnd
-    
-        \resumeSubheading
-          {Startup, Inc}{May 2019 -- August 2019}
-          {Front End Developer Intern}{City, State}
+      \resumeProjectHeading
+          {\textbf{Simple Paintball} $|$ \emph{Spigot API, Java, Maven, TravisCI, Git}}{May 2018 -- May 2020}
           \resumeItemListStart
-            \resumeItem{Assisted in development of the front end of a mobile application for iOS/Android using Dart and the Flutter framework.}
-            \resumeItem{Worked with Google Firebase to manage user inputted data across multiple platforms including web and mobile apps.}
-            \resumeItem{Collaborated with team members using version control systems such as Git to organize modifications and assign tasks.}
-            \resumeItem{Utilized Android Studio as a development environment in order to visualize the application in both iOS and Android.}
-        \resumeItemListEnd
-        
-      \resumeSubHeadingListEnd
-    \vspace{-16pt}
-    
-    %-----------PROJECTS-----------
-    \section{Projects}
-        \vspace{-5pt}
-        \resumeSubHeadingListStart
-          \resumeProjectHeading
-              {\textbf{Gym Reservation Bot} $|$ \emph{Python, Selenium, Google Cloud Console}}{January 2021}
-              \resumeItemListStart
-                \resumeItem{Developed an automatic bot using Python and Google Cloud Console to register myself for a timeslot at my school gym.}
-                \resumeItem{Implemented Selenium to create an instance of Chrome in order to interact with the correct elements of the web page.}
-                \resumeItem{Created a Linux virtual machine to run on Google Cloud so that the program is able to run everyday from the cloud.}
-                \resumeItem{Used Cron to schedule the program to execute automatically at 11 AM every morning so a reservation is made for me.}
-              \resumeItemListEnd
-              \vspace{-13pt}
-          \resumeProjectHeading
-              {\textbf{Ticket Price Calculator App} $|$ \emph{Java, Android Studio}}{November 2020}
-              \resumeItemListStart
-                \resumeItem{Created an Android application using Java and Android Studio to calculate ticket prices for trips to museums in NYC.}
-                \resumeItem{Processed user inputted information in the back-end of the app to return a subtotal price based on the tickets selected.}
-                \resumeItem{Utilized the layout editor to create a UI for the application in order to allow different scenes to interact with each other.}
-              \resumeItemListEnd 
-              \vspace{-13pt}
-              \resumeProjectHeading
-              {\textbf{Transaction Management GUI} $|$ \emph{Java, Eclipse, JavaFX}}{October 2020}
-              \resumeItemListStart
-                \resumeItem{Designed a sample banking transaction system using Java to simulate the common functions of using a bank account.}
-                \resumeItem{Used JavaFX to create a GUI that supports actions such as creating an account, deposit, withdraw, list all acounts, etc.}
-                \resumeItem{Implemented object-oriented programming practices such as inheritance to create different account types and databases.}
-              \resumeItemListEnd 
-        \resumeSubHeadingListEnd
-    \vspace{-15pt}
-    
-    
-    %
-    %-----------PROGRAMMING SKILLS-----------
-    \section{Technical Skills}
-    \begin{itemize}[leftmargin=0.15in, label={}]
-        \small{\item{
-        \textbf{Languages}{: Python, Java, C, HTML/CSS, JavaScript, SQL} \\
-        \textbf{Developer Tools}{: VS Code, Eclipse, Google Cloud Platform, Android Studio} \\
-        \textbf{Technologies/Frameworks}{: Linux, Jenkins, GitHub, JUnit, WordPress} \\
-        }}
-    \end{itemize}
-    \vspace{-16pt}
-    
-    
-    %-----------INVOLVEMENT---------------
-    \section{Leadership / Extracurricular}
-        \resumeSubHeadingListStart
-            \resumeSubheading{Fraternity}{Spring 2020 -- Present}{President}{University Name}
-                \resumeItemListStart
-                    \resumeItem{Achieved a 4 star fraternity ranking by the Office of Fraternity and Sorority Affairs (highest possible ranking).}
-                    \resumeItem{Managed executive board of 5 members and ran weekly meetings to oversee progress in essential parts of the chapter.}
-                    \resumeItem{Led chapter of 30+ members to work towards goals that improve and promote community service, academics, and unity.}
-                \resumeItemListEnd
-            
-        \resumeSubHeadingListEnd
-    
-    
-    \end{document}
+            \resumeItem{Developed a Minecraft server plugin to entertain kids during free time for a previous job}
+            \resumeItem{Published plugin to websites gaining 2K+ downloads and an average 4.5/5-star review}
+            \resumeItem{Implemented continuous delivery using TravisCI to build the plugin upon new a release}
+            \resumeItem{Collaborated with Minecraft server administrators to suggest features and get feedback about the plugin}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%-----------PROGRAMMING SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Java, Python, C/C++, SQL (Postgres), JavaScript, HTML/CSS, R} \\
+     \textbf{Frameworks}{: React, Node.js, Flask, JUnit, WordPress, Material-UI, FastAPI} \\
+     \textbf{Developer Tools}{: Git, Docker, TravisCI, Google Cloud Platform, VS Code, Visual Studio, PyCharm, IntelliJ, Eclipse} \\
+     \textbf{Libraries}{: pandas, NumPy, Matplotlib}
+    }}
+ \end{itemize}
+
+\end{document}
   LATEX
 
   def self.extraction_prompt(resume_content)
@@ -249,11 +211,18 @@ module ResumePrompts
       Include the following fields if present:
       - name (first and last name separately)
       - contact (email, phone, location with street, city, state, zip)
+      - social_media (linkedin, github, twitter, etc.)
       - education (degree, school, graduation date, GPA, relevant coursework)
       - experience (company, title, dates, location, bullet points of achievements)
       - projects (name, technologies used, bullet points of details)
       - technical_skills (categorized by: languages, developer_tools, technologies_frameworks)
       - leadership (organization, role, dates, location, bullet points of achievements)
+      - awards (name, date, organization, description)
+      - certifications (name, date, organization, description)
+      - publications (title, date, organization, description)
+      - honors (name, date, organization, description)
+      - presentations (name, date, organization, description)
+      - other (any other information that is not covered by the above fields)
       
       Format the response as valid JSON that can be parsed. Ensure all dates, locations, and other details are preserved exactly as written.
       If certain information is not present in the resume, omit those fields from the JSON rather than including empty values.
@@ -286,16 +255,17 @@ module ResumePrompts
       You may change certain styling to fit the content, but do not change the structure of the document.
       You do not need to use all the sections, but you should use the same structure and formatting as the example.
       For empty content, omit the section entirely. For example, if a job has no bullet points, omit the \\resumeItemListStart and \\resumeItemListEnd.
+      Ensure all content is grammatically correct and properly formatted.
 
 
       Key sections to update:
       1. Header - Replace with the provided name and contact information
       2. Education - Use the same formatting but with the provided education details
-      3. Coursework - Keep the 4-column layout using multicols
-      4. Experience - Use \\resumeSubheading and \\resumeItem for each position
-      5. Projects - Use \\resumeProjectHeading with the $|$ separator for technologies
-      6. Technical Skills - Keep the exact same categories and formatting
-      7. Leadership - Use the same formatting as the Experience section
+      3. Experience - Use \\resumeSubheading and \\resumeItem for each position
+      4. Projects - Use \\resumeProjectHeading with the $|$ separator for technologies
+      5. Technical Skills - Keep the exact same categories and formatting
+      6. Awards, Certifications, Publications, Honors, Presentations - Use the same formatting as the Technical Skills section
+      7. Leadership, Other - Use the same formatting as the Experience section
 
       Here's the resume information to format:
       #{extracted_info}
@@ -307,6 +277,7 @@ module ResumePrompts
       IMPORTANT: Escape all characters that are not allowed in LaTeX. These include: \ { } $ % ^ ~ _ # & |. You can escape them by adding a backslash before the character.
       IMPORTANT: If certain information is not present in the resume, omit those fields from the LaTeX output. For example, if a project has no technologies used, omit the technologies used section. If a project has no dates, omit the dates section. Do NOT write "None" or "N/A" in the LaTeX output.
       IMPORTANT: Do not include any additional text or comments in the LaTeX output. Do not include any ```latex or ``` in the LaTeX output.
+      IMPORTANT: Do not add unnecessary or additional formatting beyond what is already in the template.
       IMPORTANT: Provide ONLY the LaTeX output, no other text or comments.
       \\documentclass
     PROMPT

@@ -16,9 +16,10 @@ class GeminiApiService < ResumeApiService
     }]
 
     request_body = {
-      model: 'gemini-2.0-flash',
+      model: 'gemini-1.5-flash',
       max_tokens: 3000,
       messages: messages,
+      temperature: 0.2
     }
     
     response = RestClient.post(
