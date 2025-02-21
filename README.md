@@ -2,6 +2,8 @@
 
 A modern web application for converting any resume into Jake's Resume template—the industry standard for SWEs, built with Ruby on Rails backend and Remix.js frontend.
 
+Try it now: https://jakesresu.me/
+
 ## 🚀 Features
 
 - Resume file upload and processing
