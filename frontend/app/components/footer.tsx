@@ -18,7 +18,11 @@ export function Footer() {
         <a href="https://github.com/martin226/makeitjakes" className="underline hover:text-blue-600 transition-colors" target="_blank">
           open-source
         </a>{' '}
-        ❤️! &copy; {new Date().getFullYear()} Martin Sit.
+        ❤️! By{' '}
+        <a href="https://x.com/_martinsit" className="underline hover:text-blue-600 transition-colors" target="_blank">
+          @_martinsit
+        </a>
+        .
       </p>
     </motion.div>
   );
