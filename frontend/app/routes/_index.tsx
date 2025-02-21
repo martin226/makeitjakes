@@ -171,53 +171,129 @@ export default function Index() {
   const isSubmitting = navigation.state === 'submitting';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-background to-blue-50 flex flex-col items-center justify-center p-4 md:p-8">
+    <div className="min-h-screen">
       <Header />
 
-      {!latex && (
-        <>
-          <BeforeAfter />
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="w-full max-w-md"
-          >
-            <FileUpload 
-              isSubmitting={isSubmitting} 
-              isProcessing={!!requestId} 
-            />
-          </motion.div>
-        </>
-      )}
+      <main className="container mx-auto px-6 pt-8">
+        <div className="mx-auto space-y-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="font-playfair text-5xl md:text-6xl lg:text-7xl leading-tight"
+            >
+              Improve Your Resume in{" "}
+              <span className="relative inline-block">
+                <span className="absolute inset-0 bg-primary/20" />
+                <span className="relative">One Click</span>
+              </span>
+            </motion.h1>
 
-      <AnimatePresence>
-        {latex && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="w-full max-w-[90vw] md:max-w-4xl"
-          >
-            <div className="flex justify-end mb-4">
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setLatex(null);
-                  setStatus('');
-                  setRequestId(null);
-                  window.location.reload();
-                }}
-              >
-                Convert Another Resume
-              </Button>
-            </div>
-            <LatexOutput latex={latex} requestId={requestId} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="text-xl text-muted-foreground max-w-3xl mx-auto mt-4"
+            >
+              Transform your SWE resume into Jake's elegant LaTeX template with just one click. <span className="font-bold">No LaTeX knowledge required</span>.
+            </motion.p>
+          </div>
 
-      <StatusMessage error={actionData?.error} status={status} />
+          {!latex && (
+            <>
+              <div className="relative w-full max-w-5xl mx-auto text-center">
+                {/* Floating Cards */}
+                <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="absolute lg:-left-20 xl:-left-44 -top-12 w-48 h-48 hidden lg:block"
+                >
+                  <motion.div
+                    initial={{ rotate: -15 }}
+                    animate={{ rotate: -10 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="w-full h-full bg-white rounded-lg shadow-lg p-4 flex flex-col"
+                  >
+                    <div className="w-8 h-8 bg-red-100 rounded mb-2">
+                      <svg className="w-6 h-6 text-red-500 m-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+                      </svg>
+                    </div>
+                    <div className="text-xs">resume.pdf</div>
+                  </motion.div>
+                </motion.div>
+
+                <motion.div 
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="absolute lg:-right-20 xl:-right-44 top-12 w-48 h-48 hidden lg:block"
+                >
+                  <motion.div
+                    initial={{ rotate: 15 }}
+                    animate={{ rotate: 10 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="w-full h-full bg-white rounded-lg shadow-lg p-4 flex flex-col"
+                  >
+                    <div className="w-8 h-8 bg-primary/10 rounded mb-2">
+                      <svg className="w-6 h-6 text-primary m-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+                      </svg>
+                    </div>
+                    <div className="text-xs">template.tex</div>
+                  </motion.div>
+                </motion.div>
+
+                <div className="flex justify-center">
+                  <BeforeAfter />
+                </div>
+
+                <div className="mt-16 max-w-2xl mx-auto">
+                  <FileUpload 
+                    isSubmitting={isSubmitting} 
+                    isProcessing={!!requestId} 
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          <AnimatePresence>
+            {latex && (
+              <div className="flex justify-center w-full">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="w-full max-w-[90vw] md:max-w-4xl text-left"
+                >
+                  <div className="flex justify-end mb-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setLatex(null);
+                        setStatus('');
+                        setRequestId(null);
+                        window.location.reload();
+                      }}
+                    >
+                      Convert Another Resume
+                    </Button>
+                  </div>
+                  <LatexOutput latex={latex} requestId={requestId} />
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+
+          <div className="text-center">
+            <StatusMessage error={actionData?.error} status={status} />
+          </div>
+        </div>
+      </main>
+
       <Footer />
     </div>
   );

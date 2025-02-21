@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { Form, useSubmit } from '@remix-run/react';
 import { Button } from '~/components/ui/button';
-import { FileText, Upload, ArrowRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { motion } from 'framer-motion';
 
@@ -72,10 +71,9 @@ export function FileUpload({ isSubmitting, isProcessing = false }: FileUploadPro
       method="post"
       encType="multipart/form-data"
       className={cn(
-        'flex flex-col items-center justify-center w-full max-w-md p-8 text-center',
-        'border-2 border-dashed rounded-xl transition-colors duration-200',
-        !isDisabled && 'cursor-pointer',
-        dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50/50'
+        'border-2 border-dashed border-gray-300 rounded-lg p-12 text-center',
+        !isDisabled && 'cursor-pointer hover:border-primary/50 hover:bg-primary/5',
+        dragActive && 'border-primary bg-primary/10'
       )}
       onClick={() => {
         if (!isDisabled) {
@@ -97,47 +95,53 @@ export function FileUpload({ isSubmitting, isProcessing = false }: FileUploadPro
         disabled={isDisabled}
       />
 
-      <div className="flex flex-col items-center gap-4">
-        <div
-          className={cn(
-            'p-4 rounded-full transition-colors duration-200',
-            dragActive ? 'bg-blue-100' : 'bg-gray-100'
-          )}
-        >
-          {isDisabled ? (
-            <Upload className="w-8 h-8 text-blue-500 animate-bounce" />
-          ) : (
-            <FileText className="w-8 h-8 text-gray-500" />
-          )}
-        </div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="mx-auto w-16 h-16 mb-4"
+      >
+        <svg className="w-full h-full text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      </motion.div>
 
-        <div className="text-center">
-          {selectedFile ? (
-            <div className="space-y-2">
-              <p className="text-sm font-medium">{selectedFile.name}</p>
-              <Button
-                type="submit"
-                disabled={isDisabled}
-                className={cn(
-                  "group transition-colors duration-200",
-                  isDisabled ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                {isProcessing ? 'Processing...' : isSubmitting ? 'Converting...' : 'Convert Now'}
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <p className="font-medium">Drop your resume here or click to browse</p>
-              <p className="text-sm text-muted-foreground">Supports PDF, DOC, DOCX, and TXT files</p>
-            </div>
-          )}
-        </div>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="text-center"
+      >
+        {selectedFile ? (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">{selectedFile.name}</p>
+            <Button
+              type="submit"
+              disabled={isDisabled}
+              className={cn(
+                "bg-primary hover:bg-primary/90",
+                isDisabled && "opacity-50 cursor-not-allowed"
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              {isProcessing ? 'Processing...' : isSubmitting ? 'Converting...' : 'Convert Now'}
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold">Drop your resume here or click to browse</h3>
+            <p className="text-muted-foreground">Supports PDF, DOC, DOCX, and TXT files</p>
+            <Button className="mt-4 bg-primary hover:bg-primary/90">Upload Resume</Button>
+          </div>
+        )}
+      </motion.div>
     </Form>
   );
 } 

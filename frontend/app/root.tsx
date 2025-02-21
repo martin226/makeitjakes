@@ -9,6 +9,7 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 import styles from './tailwind.css?url';
+import fonts from './fonts.css?url';
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,6 +20,7 @@ export const meta: MetaFunction = () => {
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: styles },
+  { rel: 'stylesheet', href: fonts },
   { rel: 'icon', href: '/favicon.ico?v=4' },
 ];
 
