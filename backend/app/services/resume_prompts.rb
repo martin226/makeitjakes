@@ -279,6 +279,7 @@ module ResumePrompts
       IMPORTANT: Do not include any additional text or comments in the LaTeX output. Do not include any ```latex or ``` in the LaTeX output.
       IMPORTANT: Do not add unnecessary or additional formatting beyond what is already in the template.
       IMPORTANT: Provide ONLY the LaTeX output, no other text or comments.
+      IMPORTANT: Do not repeat information throughout the resume. A position or activity must only be listed once.
       \\documentclass
     PROMPT
   end
