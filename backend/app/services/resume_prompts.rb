@@ -237,6 +237,7 @@ module ResumePrompts
 
       IMPORTANT: Do not include any additional text or comments in the JSON output. Do not include any ```json or ``` in the output.
       IMPORTANT: Provide ONLY the JSON output, no other text or comments.
+      IMPORTANT: Any given position or activity must only be listed in a single section.
 
       {
     PROMPT
@@ -279,6 +280,7 @@ module ResumePrompts
       IMPORTANT: Do not include any additional text or comments in the LaTeX output. Do not include any ```latex or ``` in the LaTeX output.
       IMPORTANT: Do not add unnecessary or additional formatting beyond what is already in the template.
       IMPORTANT: Provide ONLY the LaTeX output, no other text or comments.
+      IMPORTANT: Any given position or activity must only be listed in a single section. Avoid repetition.
       \\documentclass
     PROMPT
   end
